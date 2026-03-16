@@ -25,3 +25,6 @@ Thumbs.db
 
 # 会话记录 - 太大，不需要同步
 *.jsonl
+
+# 工具结果缓存
+**/tool-results/
