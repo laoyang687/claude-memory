@@ -1,0 +1,219 @@
+     1→import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+     2→import { JwtService } from '@nestjs/jwt';
+     3→import { ConfigService } from '@nestjs/config';
+     4→import axios from 'axios';
+     5→import { PrismaService } from '@/common/services/prisma.service';
+     6→import { RedisService } from '@/common/services/redis.service';
+     7→import { WechatLoginDto } from './dto/auth.dto';
+     8→
+     9→interface WechatUserInfo {
+    10→  openid: string;
+    11→  unionid?: string;
+    12→  session_key?: string;
+    13→}
+    14→
+    15→interface JwtPayload {
+    16→  sub: number;
+    17→  openid: string;
+    18→  role: string;
+    19→}
+    20→
+    21→@Injectable()
+    22→export class AuthService {
+    23→  private readonly logger = new Logger(AuthService.name);
+    24→
+    25→  constructor(
+    26→    private prisma: PrismaService,
+    27→    private jwtService: JwtService,
+    28→    private config: ConfigService,
+    29→    private redis: RedisService,
+    30→  ) {}
+    31→
+    32→  /**
+    33→   * 微信小程序登录
+    34→   */
+    35→  async wechatLogin(dto: WechatLoginDto) {
+    36→    // 1. 通过 code 获取 openid
+    37→    const wechatInfo = await this.getWxUserInfo(dto.code);
+    38→
+    39→    // 2. 查找或创建用户
+    40→    let user = await this.prisma.user.findUnique({
+    41→      where: { openid: wechatInfo.openid },
+    42→    });
+    43→
+    44→    const isNewUser = !user;
+    45→
+    46→    if (isNewUser) {
+    47→      user = await this.prisma.user.create({
+    48→        data: {
+    49→          openid: wechatInfo.openid,
+    50→          unionid: wechatInfo.unionid,
+    51→          role: 'student',
+    52→        },
+    53→      });
+    54→      this.logger.log(`New user created: ${user.id}`);
+    55→    }
+    56→
+    57→    // 3. 生成 Token
+    58→    const token = await this.generateToken(user);
+    59→
+    60→    // 4. 缓存用户信息
+    61→    await this.cacheUserToken(user.id, token);
+    62→
+    63→    return {
+    64→      token,
+    65→      expireAt: this.getTokenExpireTime(),
+    66→      isNewUser,
+    67→      userInfo: this.sanitizeUser(user),
+    68→    };
+    69→  }
+    70→
+    71→  /**
+    72→   * 刷新 Token
+    73→   */
+    74→  async refreshToken(userId: number) {
+    75→    const user = await this.prisma.user.findUnique({
+    76→      where: { id: BigInt(userId) },
+    77→    });
+    78→
+    79→    if (!user) {
+    80→      throw new UnauthorizedException('User not found');
+    81→    }
+    82→
+    83→    const token = await this.generateToken(user);
+    84→    await this.cacheUserToken(user.id, token);
+    85→
+    86→    return {
+    87→      token,
+    88→      expireAt: this.getTokenExpireTime(),
+    89→    };
+    90→  }
+    91→
+    92→  /**
+    93→   * 验证 Token
+    94→   */
+    95→  async validateUser(payload: JwtPayload) {
+    96→    const user = await this.prisma.user.findUnique({
+    97→      where: { id: BigInt(payload.sub) },
+    98→    });
+    99→
+   100→    if (!user || user.status !== 1) {
+   101→      throw new UnauthorizedException('User not found or disabled');
+   102→    }
+   103→
+   104→    return user;
+   105→  }
+   106→
+   107→  /**
+   108→   * 调用微信接口获取用户信息
+   109→   */
+   110→  private async getWxUserInfo(code: string): Promise<WechatUserInfo> {
+   111→    const appId = this.config.get('WECHAT_APP_ID');
+   112→    const appSecret = this.config.get('WECHAT_APP_SECRET');
+   113→
+   114→    if (!appId || !appSecret) {
+   115→      this.logger.warn('WeChat app credentials not configured, using mock data');
+   116→      // 开发环境模拟
+   117→      return {
+   118→        openid: `mock_openid_${Date.now()}`,
+   119→        unionid: `mock_unionid_${Date.now()}`,
+   120→      };
+   121→    }
+   122→
+   123→    const url = 'https://api.weixin.qq.com/sns/jscode2session';
+   124→    const params = {
+   125→      appid: appId,
+   126→      secret: appSecret,
+   127→      js_code: code,
+   128→      grant_type: 'authorization_code',
+   129→    };
+   130→
+   131→    try {
+   132→      const response = await axios.get(url, { params });
+   133→      const { openid, unionid, session_key, errcode, errmsg } = response.data;
+   134→
+   135→      if (errcode) {
+   136→        throw new UnauthorizedException(`WeChat login failed: ${errmsg}`);
+   137→      }
+   138→
+   139→      return { openid, unionid, session_key };
+   140→    } catch (error) {
+   141→      this.logger.error('WeChat API error', error);
+   142→      throw new UnauthorizedException('Failed to authenticate with WeChat');
+   143→    }
+   144→  }
+   145→
+   146→  /**
+   147→   * 生成 JWT Token
+   148→   */
+   149→  private async generateToken(user: any): Promise<string> {
+   150→    const payload: JwtPayload = {
+   151→      sub: Number(user.id),
+   152→      openid: user.openid,
+   153→      role: user.role,
+   154→    };
+   155→
+   156→    return this.jwtService.sign(payload);
+   157→  }
+   158→
+   159→  /**
+   160→   * 获取 Token 过期时间
+   161→   */
+   162→  private getTokenExpireTime(): number {
+   163→    const expiresIn = this.config.get('JWT_EXPIRES_IN', '7d');
+   164→    const now = Date.now();
+   165→    const match = expiresIn.match(/(\d+)([dhms])/);
+   166→
+   167→    if (match) {
+   168→      const value = parseInt(match[1]);
+   169→      const unit = match[2];
+   170→      const unitMs: Record<string, number> = {
+   171→        d: 86400000,
+   172→        h: 3600000,
+   173→        m: 60000,
+   174→        s: 1000,
+   175→      };
+   176→      return now + value * (unitMs[unit] || 0);
+   177→    }
+   178→
+   179→    return now + 7 * 86400000; // 默认7天
+   180→  }
+   181→
+   182→  /**
+   183→   * 缓存用户 Token
+   184→   */
+   185→  private async cacheUserToken(userId: number, token: string): Promise<void> {
+   186→    const key = `auth:token:${userId}`;
+   187→    const ttl = 7 * 86400; // 7天
+   188→    await this.redis.set(key, token, ttl);
+   189→  }
+   190→
+   191→  /**
+   192→   * 清理用户缓存
+   193→   */
+   194→  async logout(userId: number): Promise<void> {
+   195→    const key = `auth:token:${userId}`;
+   196→    await this.redis.del(key);
+   197→  }
+   198→
+   199→  /**
+   200→   * 脱敏用户信息
+   201→   */
+   202→  private sanitizeUser(user: any) {
+   203→    return {
+   204→      id: Number(user.id),
+   205→      nickname: user.nickname,
+   206→      avatar: user.avatar,
+   207→      role: user.role,
+   208→      grade: user.grade,
+   209→      phone: user.phone
+   210→        ? `${user.phone.slice(0, 3)}****${user.phone.slice(-4)}`
+   211→        : null,
+   212→    };
+   213→  }
+   214→}
+   215→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

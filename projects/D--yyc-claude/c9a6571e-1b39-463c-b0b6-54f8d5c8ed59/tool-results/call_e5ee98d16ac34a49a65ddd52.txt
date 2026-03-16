@@ -1,0 +1,34 @@
+     1→1
+     2→00:00:00,240 --> 00:00:03,679
+     3→If you have multiple interests and you
+     4→
+     5→2
+     6→00:00:02,080 --> 00:00:05,920
+     7→don't know how to manage them or you
+     8→
+     9→3
+    10→00:00:03,679 --> 00:00:08,400
+    11→don't know what options there are for
+    12→
+    13→4
+    14→00:00:05,920 --> 00:00:10,400
+    15→you in the future, then I have good news
+    16→
+    17→5
+    18→00:00:08,400 --> 00:00:13,519
+    19→for you because this is the greatest
+    20→
+    21→6
+    22→00:00:10,400 --> 00:00:15,920
+    23→time to be alive. But in lies the
+    24→
+    25→7
+    26→00:00:13,519 --> 00:00:18,480
+    27→problem. Society has made you feel like
+    28→
+    29→8
+    30→00:00:15,920 --> 00:00:20,480
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

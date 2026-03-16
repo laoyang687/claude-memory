@@ -1,0 +1,199 @@
+The file D:\yyc\claude\mistake-analyzer\backend\src\common\services\redis.service.ts has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+     1→import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+     2→import Redis from 'ioredis';
+     3→
+     4→@Injectable()
+     5→export class RedisService implements OnModuleInit, OnModuleDestroy {
+     6→  private readonly logger = new Logger(RedisService.name);
+     7→  private client: Redis | null = null;
+     8→
+     9→  constructor() {
+    10→    // 仅在配置了Redis时才创建连接
+    11→    if (process.env.REDIS_HOST) {
+    12→      this.client = new Redis({
+    13→        host: process.env.REDIS_HOST || 'localhost',
+    14→        port: parseInt(process.env.REDIS_PORT || '6379'),
+    15→        password: process.env.REDIS_PASSWORD || undefined,
+    16→        db: parseInt(process.env.REDIS_DB || '0'),
+    17→        retryStrategy: (times) => {
+    18→          const delay = Math.min(times * 50, 2000);
+    19→          return delay;
+    20→        },
+    21→      });
+    22→    }
+    23→  }
+    24→
+    25→  async onModuleInit() {
+    26→    if (!this.client) {
+    27→      this.logger.warn('Redis is not configured, running without cache');
+    28→      return;
+    29→    }
+    30→
+    31→    this.client.on('connect', () => {
+    32→      this.logger.log('Redis connected successfully');
+    33→    });
+    34→
+    35→    this.client.on('error', (err) => {
+    36→      this.logger.error('Redis connection error', err);
+    37→    });
+    38→
+    39→    try {
+    40→      await this.client.ping();
+    41→      this.logger.log('Redis ping successful');
+    42→    } catch (error) {
+    43→      this.logger.warn('Redis ping failed, service may not be available');
+    44→    }
+    45→  }
+    46→
+    47→  async onModuleDestroy() {
+    48→    if (this.client) {
+    49→      await this.client.quit();
+    50→      this.logger.log('Redis disconnected');
+    51→    }
+    52→  }
+    53→
+    54→  private ensureClient(): Redis {
+    55→    if (!this.client) {
+    56→      throw new Error('Redis is not configured');
+    57→    }
+    58→    return this.client;
+    59→  }
+    60→
+    61→  /**
+    62→   * 设置缓存
+    63→   * @param key 键
+    64→   * @param value 值（自动序列化）
+    65→   * @param ttl 过期时间（秒）
+    66→   */
+    67→  async set(key: string, value: any, ttl?: number): Promise<'OK' | null> {
+    68→    if (!this.client) return null;
+    69→    const serialized = JSON.stringify(value);
+    70→    if (ttl) {
+    71→      return this.client.setex(key, ttl, serialized);
+    72→    }
+    73→    return this.client.set(key, serialized);
+    74→  }
+    75→
+    76→  /**
+    77→   * 获取缓存（自动反序列化）
+    78→   * @param key 键
+    79→   */
+    80→  async get<T = any>(key: string): Promise<T | null> {
+    81→    if (!this.client) return null;
+    82→    const value = await this.client.get(key);
+    83→    if (!value) return null;
+    84→    try {
+    85→      return JSON.parse(value) as T;
+    86→    } catch {
+    87→      return value as T;
+    88→    }
+    89→  }
+    90→
+    91→  /**
+    92→   * 删除缓存
+    93→   * @param keys 键（支持多个）
+    94→   */
+    95→  async del(...keys: string[]): Promise<number> {
+    96→    if (!this.client) return 0;
+    97→    return this.client.del(...keys);
+    98→  }
+    99→
+   100→  /**
+   101→   * 检查键是否存在
+   102→   * @param key 键
+   103→   */
+   104→  async exists(key: string): Promise<number> {
+   105→    if (!this.client) return 0;
+   106→    return this.client.exists(key);
+   107→  }
+   108→
+   109→  /**
+   110→   * 设置过期时间
+   111→   * @param key 键
+   112→   * @param ttl 过期时间（秒）
+   113→   */
+   114→  async expire(key: string, ttl: number): Promise<number> {
+   115→    if (!this.client) return 0;
+   116→    return this.client.expire(key, ttl);
+   117→  }
+   118→
+   119→  /**
+   120→   * 原子递增
+   121→   * @param key 键
+   122→   */
+   123→  async incr(key: string): Promise<number> {
+   124→    if (!this.client) return 0;
+   125→    return this.client.incr(key);
+   126→  }
+   127→
+   128→  /**
+   129→   * 原子递减
+   130→   * @param key 键
+   131→   */
+   132→  async decr(key: string): Promise<number> {
+   133→    if (!this.client) return 0;
+   134→    return this.client.decr(key);
+   135→  }
+   136→
+   137→  /**
+   138→   * 添加到集合
+   139→   * @param key 键
+   140→   * @param members 成员
+   141→   */
+   142→  async sadd(key: string, ...members: string[]): Promise<number> {
+   143→    if (!this.client) return 0;
+   144→    return this.client.sadd(key, ...members);
+   145→  }
+   146→
+   147→  /**
+   148→   * 从集合移除
+   149→   * @param key 键
+   150→   * @param members 成员
+   151→   */
+   152→  async srem(key: string, ...members: string[]): Promise<number> {
+   153→    if (!this.client) return 0;
+   154→    return this.client.srem(key, ...members);
+   155→  }
+   156→
+   157→  /**
+   158→   * 获取集合所有成员
+   159→   * @param key 键
+   160→   */
+   161→  async smembers(key: string): Promise<string[]> {
+   162→    if (!this.client) return [];
+   163→    return this.client.smembers(key);
+   164→  }
+   165→
+   166→  /**
+   167→   * 有序集合添加
+   168→   * @param key 键
+   169→   * @param score 分数
+   170→   * @param member 成员
+   171→   */
+   172→  async zadd(key: string, score: number, member: string): Promise<number> {
+   173→    if (!this.client) return 0;
+   174→    return this.client.zadd(key, score, member);
+   175→  }
+   176→
+   177→  /**
+   178→   * 有序集合范围查询
+   179→   * @param key 键
+   180→   * @param start 开始
+   181→   * @param stop 结束
+   182→   */
+   183→  async zrange(key: string, start: number, stop: number): Promise<string[]> {
+   184→    if (!this.client) return [];
+   185→    return this.client.zrange(key, start, stop);
+   186→  }
+   187→
+   188→  /**
+   189→   * 有序集合删除
+   190→   * @param key 键
+   191→   * @param members 成员
+   192→   */
+   193→  async zrem(key: string, ...members: string[]): Promise<number> {
+   194→    if (!this.client) return 0;
+   195→    return this.client.zrem(key, ...members);
+   196→  }
+   197→}
+   198→

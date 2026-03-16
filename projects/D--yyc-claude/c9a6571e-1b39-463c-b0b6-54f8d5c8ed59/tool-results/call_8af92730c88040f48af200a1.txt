@@ -1,0 +1,32 @@
+Fetching videos from: https://www.youtube.com/@DanKoeTalks
+Saved 154 videos to dan_koe_videos_detailed.txt
+
+============================================================
+Total: 154 videos
+============================================================
+
+First 10 videos:
+1. If you have multiple interests, do not waste the next 2-3 years
+   https://www.youtube.com/watch?v=ExNWGF-q64M
+2. How I'd build a one-person business (if I started over in 2026)
+   https://www.youtube.com/watch?v=VyR8nqD3sQ8
+3. How to fix your entire life in 1 day
+   https://www.youtube.com/watch?v=K8K09g9XR4s
+4. You need to become high-agency... here's how
+   https://www.youtube.com/watch?v=0XI_Xt0ci2Y
+5. How To Articulate Your Thoughts Intelligently (Talk Like This)
+   https://www.youtube.com/watch?v=DKT6m_8vCkA
+6. How To Use AI Better Than 99% Of People (This Changed My Life)
+   https://www.youtube.com/watch?v=xgpLjLHB5sA
+7. Kortex: The $3 Million Dollar Mistake
+   https://www.youtube.com/watch?v=vbrTv-4PsdA
+8. I'm 29. Here's How To Not Waste Your 20s.
+   https://www.youtube.com/watch?v=xCkZbMkMKD4
+9. A Full Dopamine Detox Protocol To Reset Your Life In 30 Days
+   https://www.youtube.com/watch?v=U5kQTKWTUX0
+10. A Full Guide To Reinvent Your Entire Life (In 6-12 Months)
+   https://www.youtube.com/watch?v=SL5lwg1wYaE
+
+...
+
+Full list saved to: dan_koe_videos_detailed.txt

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "sessionId": "dbfe1962-c056-46f1-ad5c-298d27857683",
+      "fullPath": "C:\\Users\\wqj85\\.claude\\projects\\C--Users-wqj85-Desktop-hetong\\dbfe1962-c056-46f1-ad5c-298d27857683.jsonl",
+      "fileMtime": 1769036911189,
+      "firstPrompt": "请读取这个文件夹的：合同.pdf,是一份其他人起诉我的起诉状，你是专业律师，要帮我打官司，现在接到了这个起诉状，要打赢官司，请从专业角度帮我分析，这份起诉状有哪些法律漏洞，我们如何申述才能打赢这场官司，避免赔偿甚至尽量少赔偿.",
+      "summary": "代持纠纷：无保底条款，胜诉概率高",
+      "messageCount": 9,
+      "created": "2026-01-16T09:44:56.348Z",
+      "modified": "2026-01-16T12:15:10.390Z",
+      "gitBranch": "",
+      "projectPath": "C:\\Users\\wqj85\\Desktop\\hetong",
+      "isSidechain": false
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+The file D:\yyc\claude\get_videos.py has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+     1→"""
+     2→Script to get all video URLs from a YouTube channel using yt-dlp
+     3→"""
+     4→import yt_dlp
+     5→
+     6→def get_channel_videos(channel_url):
+     7→    """Get all video URLs from a YouTube channel"""
+     8→    print(f"Fetching videos from: {channel_url}")
+     9→
+    10→    ydl_opts = {
+    11→        'quiet': True,
+    12→        'no_warnings': True,
+    13→        'extract_flat': True,
+    14→        'ignoreerrors': True,
+    15→    }
+    16→
+    17→    try:
+    18→        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    19→            info = ydl.extract_info(channel_url, download=False)
+    20→
+    21→            if 'entries' not in info:
+    22→                print("No entries found")
+    23→                return []
+    24→
+    25→            video_urls = []
+    26→            for entry in info['entries']:
+    27→                if entry:
+    28→                    video_id = entry.get('id')
+    29→                    if video_id:
+    30→                        video_urls.append(f"https://www.youtube.com/watch?v={video_id}")
+    31→
+    32→            return video_urls
+    33→
+    34→    except Exception as e:
+    35→        print(f"Error: {e}")
+    36→        return None
+    37→
+    38→def save_to_file(video_urls, output_file):
+    39→    """Save video URLs to a file"""
+    40→    with open(output_file, 'w', encoding='utf-8') as f:
+    41→        for url in video_urls:
+    42→            f.write(url + '\n')
+    43→    print(f"Saved {len(video_urls)} video URLs to {output_file}")
+    44→
+    45→if __name__ == "__main__":
+    46→    channel_url = "https://www.youtube.com/@DanKoeTalks"
+    47→    output_file = "dan_koe_videos.txt"
+    48→
+    49→    video_urls = get_channel_videos(channel_url)
+    50→
+    51→    if video_urls:
+    52→        print(f"\nFound {len(video_urls)} videos:")
+    53→        for i, url in enumerate(video_urls, 1):
+    54→            print(f"{i}. {url}")
+    55→
+    56→        save_to_file(video_urls, output_file)
+    57→    else:
+    58→        print("No videos found.")
+    59→

@@ -1,0 +1,24 @@
+# 临时文件 - 不需要同步
+todos/
+statsig/
+shell-snapshots/
+telemetry/
+downloads/
+
+# Python 虚拟环境 - 太大，不需要同步
+skills/*/.venv/
+skills/*/__pycache__/
+**/*.pyc
+
+# 插件缓存 - 可以重新安装
+plugins/cache/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 敏感信息（如果有）
+*_credentials*
+*_token*
+*.key
+*.pem

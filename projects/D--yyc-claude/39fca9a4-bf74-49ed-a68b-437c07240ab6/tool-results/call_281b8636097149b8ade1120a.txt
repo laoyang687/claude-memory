@@ -1,0 +1,129 @@
+     1→import { Injectable } from '@nestjs/common';
+     2→import { PrismaService } from '@/common/services/prisma.service';
+     3→import { RedisService } from '@/common/services/redis.service';
+     4→
+     5→@Injectable()
+     6→export class SubjectService {
+     7→  private readonly cachePrefix = 'subject:';
+     8→
+     9→  constructor(
+    10→    private prisma: PrismaService,
+    11→    private redis: RedisService,
+    12→  ) {}
+    13→
+    14→  /**
+    15→   * 获取所有科目
+    16→   */
+    17→  async findAll(userId?: number) {
+    18→    const cacheKey = `${this.cachePrefix}all`;
+    19→
+    20→    // 尝试从缓存获取
+    21→    const cached = await this.redis.get(cacheKey);
+    22→    if (cached) {
+    23→      return cached;
+    24→    }
+    25→
+    26→    const subjects = await this.prisma.subject.findMany({
+    27→      where: { status: 1 },
+    28→      orderBy: { sort: 'asc' },
+    29→    });
+    30→
+    31→    // 如果有用户，统计每个科目的错题数量
+    32→    let result = subjects.map((s) => ({
+    33→      id: s.id,
+    34→      name: s.name,
+    35→      code: s.code,
+    36→      icon: s.icon,
+    37→      color: s.color,
+    38→      mistakeCount: 0,
+    39→    }));
+    40→
+    41→    if (userId) {
+    42→      const counts = await this.getMistakeCounts(userId);
+    43→      result = result.map((s) => ({
+    44→        ...s,
+    45→        mistakeCount: counts[s.id] || 0,
+    46→      }));
+    47→    }
+    48→
+    49→    // 缓存1小时
+    50→    await this.redis.set(cacheKey, result, 3600);
+    51→
+    52→    return result;
+    53→  }
+    54→
+    55→  /**
+    56→   * 获取科目详情
+    57→   */
+    58→  async findById(id: number) {
+    59→    const subject = await this.prisma.subject.findUnique({
+    60→      where: { id },
+    61→    });
+    62→
+    63→    if (!subject) {
+    64→      return null;
+    65→    }
+    66→
+    67→    return {
+    68→      id: subject.id,
+    69→      name: subject.name,
+    70→      code: subject.code,
+    71→      icon: subject.icon,
+    72→      color: subject.color,
+    73→    };
+    74→  }
+    75→
+    76→  /**
+    77→   * 获取科目下的知识点树
+    78→   */
+    79→  async getKnowledgeTree(subjectId: number) {
+    80→    // 获取所有知识点
+    81→    const points = await this.prisma.knowledgePoint.findMany({
+    82→      where: { subjectId },
+    83→      orderBy: [{ level: 'asc' }, { sort: 'asc' }],
+    84→    });
+    85→
+    86→    // 构建树形结构
+    87→    const map = new Map();
+    88→    const roots: any[] = [];
+    89→
+    90→    points.forEach((point) => {
+    91→      map.set(point.id, { ...point, children: [] });
+    92→    });
+    93→
+    94→    points.forEach((point) => {
+    95→      const node = map.get(point.id);
+    96→      if (point.parentId === 0) {
+    97→        roots.push(node);
+    98→      } else {
+    99→        const parent = map.get(point.parentId);
+   100→        if (parent) {
+   101→          parent.children.push(node);
+   102→        }
+   103→      }
+   104→    });
+   105→
+   106→    return roots;
+   107→  }
+   108→
+   109→  /**
+   110→   * 获取用户在各科目的错题数量
+   111→   */
+   112→  private async getMistakeCounts(userId: number): Promise<Record<number, number>> {
+   113→    const result = await this.prisma.mistake.groupBy({
+   114→      by: ['subjectId'],
+   115→      where: { userId: BigInt(userId) },
+   116→      _count: { subjectId: true },
+   117→    });
+   118→
+   119→    return result.reduce((acc, item) => {
+   120→      acc[item.subjectId] = item._count.subjectId;
+   121→      return acc;
+   122→    }, {} as Record<number, number>);
+   123→  }
+   124→}
+   125→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

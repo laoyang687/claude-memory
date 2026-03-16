@@ -1,0 +1,285 @@
+     1→import { Injectable, NotFoundException } from '@nestjs/common';
+     2→import { PrismaService } from '@/common/services/prisma.service';
+     3→import { CreateMistakeDto, UpdateMistakeDto, QueryMistakeDto } from './dto/mistake.dto';
+     4→
+     5→@Injectable()
+     6→export class MistakeService {
+     7→  constructor(private prisma: PrismaService) {}
+     8→
+     9→  /**
+    10→   * 查询错题列表
+    11→   */
+    12→  async findAll(userId: number, dto: QueryMistakeDto) {
+    13→    const { subjectId, status, knowledgeId, tags, page = 1, size = 20 } = dto;
+    14→
+    15→    const where: any = { userId: BigInt(userId) };
+    16→
+    17→    // 科目筛选
+    18→    if (subjectId) {
+    19→      where.subjectId = subjectId;
+    20→    }
+    21→
+    22→    // 掌握状态筛选
+    23→    if (status === 'mastered') {
+    24→      where.mastered = true;
+    25→    } else if (status === 'unmastered') {
+    26→      where.mastered = false;
+    27→    }
+    28→
+    29→    // 知识点筛选
+    30→    if (knowledgeId) {
+    31→      where.knowledgeIds = { contains: String(knowledgeId) };
+    32→    }
+    33→
+    34→    // 标签筛选
+    35→    if (tags) {
+    36→      where.tags = { contains: tags };
+    37→    }
+    38→
+    39→    const [total, list] = await Promise.all([
+    40→      this.prisma.mistake.count({ where }),
+    41→      this.prisma.mistake.findMany({
+    42→        where,
+    43→        include: {
+    44→          subject: {
+    45→            select: { id: true, name: true, icon: true, color: true },
+    46→          },
+    47→        },
+    48→        orderBy: { createdAt: 'desc' },
+    49→        skip: (page - 1) * size,
+    50→        take: size,
+    51→      }),
+    52→    ]);
+    53→
+    54→    return {
+    55→      total,
+    56→      page,
+    57→      size,
+    58→      list: list.map((item) => this.formatMistake(item)),
+    59→    };
+    60→  }
+    61→
+    62→  /**
+    63→   * 获取错题详情
+    64→   */
+    65→  async findOne(id: number, userId: number) {
+    66→    const mistake = await this.prisma.mistake.findFirst({
+    67→      where: { id: BigInt(id), userId: BigInt(userId) },
+    68→      include: {
+    69→        subject: true,
+    70→        reviewRecords: {
+    71→          orderBy: { createdAt: 'desc' },
+    72→          take: 10,
+    73→        },
+    74→      },
+    75→    });
+    76→
+    77→    if (!mistake) {
+    78→      throw new NotFoundException('Mistake not found');
+    79→    }
+    80→
+    81→    return {
+    82→      ...this.formatMistake(mistake),
+    83→      subject: {
+    84→        id: mistake.subject.id,
+    85→        name: mistake.subject.name,
+    86→        icon: mistake.subject.icon,
+    87→        color: mistake.subject.color,
+    88→      },
+    89→      reviewHistory: mistake.reviewRecords.map((r) => ({
+    90→        id: Number(r.id),
+    91→        result: r.result,
+    92→        duration: r.duration,
+    93→        notes: r.notes,
+    94→        createdAt: r.createdAt,
+    95→      })),
+    96→    };
+    97→  }
+    98→
+    99→  /**
+   100→   * 创建错题
+   101→   */
+   102→  async create(userId: number, dto: CreateMistakeDto) {
+   103→    // 计算下次复习时间（艾宾浩斯）
+   104→    const nextReviewAt = this.calculateNextReview(0, 'correct');
+   105→
+   106→    const data: any = {
+   107→      userId: BigInt(userId),
+   108→      subjectId: dto.subjectId,
+   109→      questionText: dto.questionText,
+   110→      questionImages: dto.questionImages
+   111→        ? JSON.stringify(dto.questionImages)
+   112→        : null,
+   113→      questionType: dto.questionType || null,
+   114→      wrongAnswer: dto.wrongAnswer,
+   115→      correctAnswer: dto.correctAnswer,
+   116→      explanation: dto.explanation,
+   117→      solutionImages: dto.solutionImages
+   118→        ? JSON.stringify(dto.solutionImages)
+   119→        : null,
+   120→      wrongReason: dto.wrongReason || null,
+   121→      aiAnalysis: dto.aiAnalysis || null,
+   122→      tags: dto.tags?.join(',') || null,
+   123→      knowledgeIds: dto.knowledgeIds?.join(',') || null,
+   124→      difficulty: dto.difficulty || 3,
+   125→      sourceType: dto.sourceType || 'exam',
+   126→      nextReviewAt,
+   127→    };
+   128→
+   129→    if (dto.childId) {
+   130→      data.childId = BigInt(dto.childId);
+   131→    }
+   132→
+   133→    const mistake = await this.prisma.mistake.create({ data });
+   134→
+   135→    return {
+   136→      id: Number(mistake.id),
+   137→      ...this.formatMistake(mistake),
+   138→    };
+   139→  }
+   140→
+   141→  /**
+   142→   * 更新错题
+   143→   */
+   144→  async update(id: number, userId: number, dto: UpdateMistakeDto) {
+   145→    const mistake = await this.prisma.mistake.findFirst({
+   146→      where: { id: BigInt(id), userId: BigInt(userId) },
+   147→    });
+   148→
+   149→    if (!mistake) {
+   150→      throw new NotFoundException('Mistake not found');
+   151→    }
+   152→
+   153→    const data: any = {};
+   154→
+   155→    if (dto.questionText) data.questionText = dto.questionText;
+   156→    if (dto.questionImages)
+   157→      data.questionImages = JSON.stringify(dto.questionImages);
+   158→    if (dto.wrongAnswer) data.wrongAnswer = dto.wrongAnswer;
+   159→    if (dto.correctAnswer) data.correctAnswer = dto.correctAnswer;
+   160→    if (dto.explanation) data.explanation = dto.explanation;
+   161→    if (dto.solutionImages)
+   162→      data.solutionImages = JSON.stringify(dto.solutionImages);
+   163→    if (dto.tags) data.tags = dto.tags.join(',');
+   164→    if (dto.knowledgeIds) data.knowledgeIds = dto.knowledgeIds.join(',');
+   165→    if (dto.difficulty) data.difficulty = dto.difficulty;
+   166→
+   167→    const updated = await this.prisma.mistake.update({
+   168→      where: { id: BigInt(id) },
+   169→      data,
+   170→    });
+   171→
+   172→    return this.formatMistake(updated);
+   173→  }
+   174→
+   175→  /**
+   176→   * 删除错题
+   177→   */
+   178→  async remove(id: number, userId: number) {
+   179→    const mistake = await this.prisma.mistake.findFirst({
+   180→      where: { id: BigInt(id), userId: BigInt(userId) },
+   181→    });
+   182→
+   183→    if (!mistake) {
+   184→      throw new NotFoundException('Mistake not found');
+   185→    }
+   186→
+   187→    await this.prisma.mistake.delete({
+   188→      where: { id: BigInt(id) },
+   189→    });
+   190→
+   191→    return { message: 'Deleted successfully' };
+   192→  }
+   193→
+   194→  /**
+   195→   * 标记已掌握
+   196→   */
+   197→  async markMastered(id: number, userId: number) {
+   198→    const mistake = await this.prisma.mistake.findFirst({
+   199→      where: { id: BigInt(id), userId: BigInt(userId) },
+   200→    });
+   201→
+   202→    if (!mistake) {
+   203→      throw new NotFoundException('Mistake not found');
+   204→    }
+   205→
+   206→    await this.prisma.mistake.update({
+   207→      where: { id: BigInt(id) },
+   208→      data: { mastered: true },
+   209→    });
+   210→
+   211→    return { message: 'Marked as mastered' };
+   212→  }
+   213→
+   214→  /**
+   215→   * 取消掌握
+   216→   */
+   217→  async markUnmastered(id: number, userId: number) {
+   218→    const mistake = await this.prisma.mistake.findFirst({
+   219→      where: { id: BigInt(id), userId: BigInt(userId) },
+   220→    });
+   221→
+   222→    if (!mistake) {
+   223→      throw new NotFoundException('Mistake not found');
+   224→    }
+   225→
+   226→    await this.prisma.mistake.update({
+   227→      where: { id: BigInt(id) },
+   228→      data: { mastered: false },
+   229→    });
+   230→
+   231→    return { message: 'Marked as unmastered' };
+   232→  }
+   233→
+   234→  /**
+   235→   * 计算下次复习时间（艾宾浩斯遗忘曲线）
+   236→   */
+   237→  private calculateNextReview(reviewCount: number, result: string): Date {
+   238→    const intervals = [1, 2, 4, 7, 15, 30, 60, 90]; // 天数
+   239→
+   240→    let idx = result === 'wrong' ? 0 : Math.min(reviewCount, intervals.length - 1);
+   241→
+   242→    const nextDate = new Date();
+   243→    nextDate.setDate(nextDate.getDate() + intervals[idx]);
+   244→
+   245→    return nextDate;
+   246→  }
+   247→
+   248→  /**
+   249→   * 格式化错题数据
+   250→   */
+   251→  private formatMistake(mistake: any) {
+   252→    return {
+   253→      id: Number(mistake.id),
+   254→      subjectId: mistake.subjectId,
+   255→      questionText: mistake.questionText,
+   256→      questionImages: mistake.questionImages
+   257→        ? JSON.parse(mistake.questionImages)
+   258→        : [],
+   259→      questionType: mistake.questionType,
+   260→      wrongAnswer: mistake.wrongAnswer,
+   261→      correctAnswer: mistake.correctAnswer,
+   262→      explanation: mistake.explanation,
+   263→      solutionImages: mistake.solutionImages
+   264→        ? JSON.parse(mistake.solutionImages)
+   265→        : [],
+   266→      wrongReason: mistake.wrongReason,
+   267→      aiAnalysis: mistake.aiAnalysis,
+   268→      tags: mistake.tags ? mistake.tags.split(',') : [],
+   269→      knowledgePoints: mistake.knowledgeIds
+   270→        ? mistake.knowledgeIds.split(',').map((id: string) => ({ id: parseInt(id) }))
+   271→        : [],
+   272→      difficulty: mistake.difficulty,
+   273→      mastered: mistake.mastered,
+   274→      reviewCount: mistake.reviewCount,
+   275→      lastReviewAt: mistake.lastReviewAt,
+   276→      nextReviewAt: mistake.nextReviewAt,
+   277→      createdAt: mistake.createdAt,
+   278→    };
+   279→  }
+   280→}
+   281→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

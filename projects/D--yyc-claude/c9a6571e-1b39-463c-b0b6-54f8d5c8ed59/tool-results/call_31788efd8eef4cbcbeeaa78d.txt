@@ -1,0 +1,324 @@
+[youtube:tab] Extracting URL: https://www.youtube.com/@DanKoeTalks/videos
+Fetching videos from: https://www.youtube.com/@DanKoeTalks
+[youtube:tab] @DanKoeTalks/videos: Downloading webpage
+[download] Downloading playlist: Dan Koe - Videos
+[youtube:tab] UCWXYDYv5STLk-zoxMP2I1Lw page 1: Downloading API JSON
+[youtube:tab] UCWXYDYv5STLk-zoxMP2I1Lw page 2: Downloading API JSON
+[youtube:tab] UCWXYDYv5STLk-zoxMP2I1Lw page 3: Downloading API JSON
+[youtube:tab] UCWXYDYv5STLk-zoxMP2I1Lw page 4: Downloading API JSON
+[youtube:tab] UCWXYDYv5STLk-zoxMP2I1Lw page 5: Downloading API JSON
+[youtube:tab] Playlist Dan Koe - Videos: Downloading 154 items of 154
+[download] Downloading item 1 of 154
+[download] Downloading item 2 of 154
+[download] Downloading item 3 of 154
+[download] Downloading item 4 of 154
+[download] Downloading item 5 of 154
+[download] Downloading item 6 of 154
+[download] Downloading item 7 of 154
+[download] Downloading item 8 of 154
+[download] Downloading item 9 of 154
+[download] Downloading item 10 of 154
+[download] Downloading item 11 of 154
+[download] Downloading item 12 of 154
+[download] Downloading item 13 of 154
+[download] Downloading item 14 of 154
+[download] Downloading item 15 of 154
+[download] Downloading item 16 of 154
+[download] Downloading item 17 of 154
+[download] Downloading item 18 of 154
+[download] Downloading item 19 of 154
+[download] Downloading item 20 of 154
+[download] Downloading item 21 of 154
+[download] Downloading item 22 of 154
+[download] Downloading item 23 of 154
+[download] Downloading item 24 of 154
+[download] Downloading item 25 of 154
+[download] Downloading item 26 of 154
+[download] Downloading item 27 of 154
+[download] Downloading item 28 of 154
+[download] Downloading item 29 of 154
+[download] Downloading item 30 of 154
+[download] Downloading item 31 of 154
+[download] Downloading item 32 of 154
+[download] Downloading item 33 of 154
+[download] Downloading item 34 of 154
+[download] Downloading item 35 of 154
+[download] Downloading item 36 of 154
+[download] Downloading item 37 of 154
+[download] Downloading item 38 of 154
+[download] Downloading item 39 of 154
+[download] Downloading item 40 of 154
+[download] Downloading item 41 of 154
+[download] Downloading item 42 of 154
+[download] Downloading item 43 of 154
+[download] Downloading item 44 of 154
+[download] Downloading item 45 of 154
+[download] Downloading item 46 of 154
+[download] Downloading item 47 of 154
+[download] Downloading item 48 of 154
+[download] Downloading item 49 of 154
+[download] Downloading item 50 of 154
+[download] Downloading item 51 of 154
+[download] Downloading item 52 of 154
+[download] Downloading item 53 of 154
+[download] Downloading item 54 of 154
+[download] Downloading item 55 of 154
+[download] Downloading item 56 of 154
+[download] Downloading item 57 of 154
+[download] Downloading item 58 of 154
+[download] Downloading item 59 of 154
+[download] Downloading item 60 of 154
+[download] Downloading item 61 of 154
+[download] Downloading item 62 of 154
+[download] Downloading item 63 of 154
+[download] Downloading item 64 of 154
+[download] Downloading item 65 of 154
+[download] Downloading item 66 of 154
+[download] Downloading item 67 of 154
+[download] Downloading item 68 of 154
+[download] Downloading item 69 of 154
+[download] Downloading item 70 of 154
+[download] Downloading item 71 of 154
+[download] Downloading item 72 of 154
+[download] Downloading item 73 of 154
+[download] Downloading item 74 of 154
+[download] Downloading item 75 of 154
+[download] Downloading item 76 of 154
+[download] Downloading item 77 of 154
+[download] Downloading item 78 of 154
+[download] Downloading item 79 of 154
+[download] Downloading item 80 of 154
+[download] Downloading item 81 of 154
+[download] Downloading item 82 of 154
+[download] Downloading item 83 of 154
+[download] Downloading item 84 of 154
+[download] Downloading item 85 of 154
+[download] Downloading item 86 of 154
+[download] Downloading item 87 of 154
+[download] Downloading item 88 of 154
+[download] Downloading item 89 of 154
+[download] Downloading item 90 of 154
+[download] Downloading item 91 of 154
+[download] Downloading item 92 of 154
+[download] Downloading item 93 of 154
+[download] Downloading item 94 of 154
+[download] Downloading item 95 of 154
+[download] Downloading item 96 of 154
+[download] Downloading item 97 of 154
+[download] Downloading item 98 of 154
+[download] Downloading item 99 of 154
+[download] Downloading item 100 of 154
+[download] Downloading item 101 of 154
+[download] Downloading item 102 of 154
+[download] Downloading item 103 of 154
+[download] Downloading item 104 of 154
+[download] Downloading item 105 of 154
+[download] Downloading item 106 of 154
+[download] Downloading item 107 of 154
+[download] Downloading item 108 of 154
+[download] Downloading item 109 of 154
+[download] Downloading item 110 of 154
+[download] Downloading item 111 of 154
+[download] Downloading item 112 of 154
+[download] Downloading item 113 of 154
+[download] Downloading item 114 of 154
+[download] Downloading item 115 of 154
+[download] Downloading item 116 of 154
+[download] Downloading item 117 of 154
+[download] Downloading item 118 of 154
+[download] Downloading item 119 of 154
+[download] Downloading item 120 of 154
+[download] Downloading item 121 of 154
+[download] Downloading item 122 of 154
+[download] Downloading item 123 of 154
+[download] Downloading item 124 of 154
+[download] Downloading item 125 of 154
+[download] Downloading item 126 of 154
+[download] Downloading item 127 of 154
+[download] Downloading item 128 of 154
+[download] Downloading item 129 of 154
+[download] Downloading item 130 of 154
+[download] Downloading item 131 of 154
+[download] Downloading item 132 of 154
+[download] Downloading item 133 of 154
+[download] Downloading item 134 of 154
+[download] Downloading item 135 of 154
+[download] Downloading item 136 of 154
+[download] Downloading item 137 of 154
+[download] Downloading item 138 of 154
+[download] Downloading item 139 of 154
+[download] Downloading item 140 of 154
+[download] Downloading item 141 of 154
+[download] Downloading item 142 of 154
+[download] Downloading item 143 of 154
+[download] Downloading item 144 of 154
+[download] Downloading item 145 of 154
+[download] Downloading item 146 of 154
+[download] Downloading item 147 of 154
+[download] Downloading item 148 of 154
+[download] Downloading item 149 of 154
+[download] Downloading item 150 of 154
+[download] Downloading item 151 of 154
+[download] Downloading item 152 of 154
+[download] Downloading item 153 of 154
+[download] Downloading item 154 of 154
+[download] Finished downloading playlist: Dan Koe - Videos
+
+=== Found 154 videos ===
+
+
+Saved 154 video URLs to dan_koe_videos.txt
+1. https://www.youtube.com/watch?v=ExNWGF-q64M
+2. https://www.youtube.com/watch?v=VyR8nqD3sQ8
+3. https://www.youtube.com/watch?v=K8K09g9XR4s
+4. https://www.youtube.com/watch?v=0XI_Xt0ci2Y
+5. https://www.youtube.com/watch?v=DKT6m_8vCkA
+6. https://www.youtube.com/watch?v=xgpLjLHB5sA
+7. https://www.youtube.com/watch?v=vbrTv-4PsdA
+8. https://www.youtube.com/watch?v=xCkZbMkMKD4
+9. https://www.youtube.com/watch?v=U5kQTKWTUX0
+10. https://www.youtube.com/watch?v=SL5lwg1wYaE
+11. https://www.youtube.com/watch?v=JeaBetH8UUc
+12. https://www.youtube.com/watch?v=h32xpeicNhw
+13. https://www.youtube.com/watch?v=IajTL2RCJ_k
+14. https://www.youtube.com/watch?v=ni04Zp7mUMM
+15. https://www.youtube.com/watch?v=SutAIv68yNk
+16. https://www.youtube.com/watch?v=ve1L21l1GW4
+17. https://www.youtube.com/watch?v=oGSHKXEKT2Q
+18. https://www.youtube.com/watch?v=rUD3Y1BFJFA
+19. https://www.youtube.com/watch?v=wdA5y0k7CRA
+20. https://www.youtube.com/watch?v=YTWm6sG0n6s
+21. https://www.youtube.com/watch?v=UixhcccGcdY
+22. https://www.youtube.com/watch?v=HA6XxtGNOm0
+23. https://www.youtube.com/watch?v=vFgjDSySYo8
+24. https://www.youtube.com/watch?v=kLd5AvsLWAc
+25. https://www.youtube.com/watch?v=VztPAofKWvg
+26. https://www.youtube.com/watch?v=65N6sQfQDV8
+27. https://www.youtube.com/watch?v=0OEtXlPtyYk
+28. https://www.youtube.com/watch?v=z9dtU-xUX04
+29. https://www.youtube.com/watch?v=0cSwXV2FAJ8
+30. https://www.youtube.com/watch?v=FzaHX5rxU34
+31. https://www.youtube.com/watch?v=n0AB6pZpotg
+32. https://www.youtube.com/watch?v=WZeLFMQOtZ4
+33. https://www.youtube.com/watch?v=Li-6QMs9_G4
+34. https://www.youtube.com/watch?v=Er2s-CFoZSo
+35. https://www.youtube.com/watch?v=REwaFvbelEk
+36. https://www.youtube.com/watch?v=vG4dnVJTA9w
+37. https://www.youtube.com/watch?v=p6n4Q6-N7XI
+38. https://www.youtube.com/watch?v=jhoG3WcECnw
+39. https://www.youtube.com/watch?v=Lt79hNo6SWE
+40. https://www.youtube.com/watch?v=B18O2QtkyCE
+41. https://www.youtube.com/watch?v=cG-brqeMrBw
+42. https://www.youtube.com/watch?v=18ahFtnuBwI
+43. https://www.youtube.com/watch?v=hRgG8omhOJ0
+44. https://www.youtube.com/watch?v=Bq9de46Uh4I
+45. https://www.youtube.com/watch?v=j1Xu3qLI3r0
+46. https://www.youtube.com/watch?v=vNObjIoMe_w
+47. https://www.youtube.com/watch?v=gRIK2BYMrrc
+48. https://www.youtube.com/watch?v=CzSmZvTYvME
+49. https://www.youtube.com/watch?v=RPVxwzJtp4o
+50. https://www.youtube.com/watch?v=j4ltbwDegHg
+51. https://www.youtube.com/watch?v=yddBiuvcaFs
+52. https://www.youtube.com/watch?v=2kOGHcN8Avs
+53. https://www.youtube.com/watch?v=_VhxCfUb2Ys
+54. https://www.youtube.com/watch?v=QOgR70Y3nBw
+55. https://www.youtube.com/watch?v=jNUFWPqz3Wk
+56. https://www.youtube.com/watch?v=RS9qrdJLdmU
+57. https://www.youtube.com/watch?v=hN-ITerTpLg
+58. https://www.youtube.com/watch?v=tkrlxYTRU_M
+59. https://www.youtube.com/watch?v=lU1wgq-2Isg
+60. https://www.youtube.com/watch?v=fJKeB3fz4_Q
+61. https://www.youtube.com/watch?v=rSe3QZ151nY
+62. https://www.youtube.com/watch?v=IgWeGmmiw7Q
+63. https://www.youtube.com/watch?v=hSi6tr0ZUSQ
+64. https://www.youtube.com/watch?v=KTgakWW0Rzw
+65. https://www.youtube.com/watch?v=ReyMCKC-FwU
+66. https://www.youtube.com/watch?v=reLmDf_PIvI
+67. https://www.youtube.com/watch?v=9Gwp-bqzxwQ
+68. https://www.youtube.com/watch?v=h7pJO8e52IM
+69. https://www.youtube.com/watch?v=DPcw7ZA4LJA
+70. https://www.youtube.com/watch?v=jCIoQF6PjzM
+71. https://www.youtube.com/watch?v=JI3ajrxdLEk
+72. https://www.youtube.com/watch?v=QTpx8BcCnTg
+73. https://www.youtube.com/watch?v=l9-4lWrYAVw
+74. https://www.youtube.com/watch?v=5_PchY1xXlo
+75. https://www.youtube.com/watch?v=KrCzMfvSDv0
+76. https://www.youtube.com/watch?v=SUzKZfyaAK8
+77. https://www.youtube.com/watch?v=_VLZ4b9LHLs
+78. https://www.youtube.com/watch?v=7wMY5MsKEkM
+79. https://www.youtube.com/watch?v=iX5CgAwxAtc
+80. https://www.youtube.com/watch?v=wXcEtxlrPMA
+81. https://www.youtube.com/watch?v=fXhmecN-AFw
+82. https://www.youtube.com/watch?v=h_r6Mo8EDic
+83. https://www.youtube.com/watch?v=fY7B5ZermSw
+84. https://www.youtube.com/watch?v=2DTZ6Kcdtmk
+85. https://www.youtube.com/watch?v=M6dhlz8hhe0
+86. https://www.youtube.com/watch?v=kVj7Py4Yor4
+87. https://www.youtube.com/watch?v=j5S5a7_pk60
+88. https://www.youtube.com/watch?v=SKI8FcKXQkg
+89. https://www.youtube.com/watch?v=iD1jJMz9zOs
+90. https://www.youtube.com/watch?v=gtMqg_QWMzA
+91. https://www.youtube.com/watch?v=XV5-PHwzubY
+92. https://www.youtube.com/watch?v=BoxC63ZvCnU
+93. https://www.youtube.com/watch?v=6XSim-zigGA
+94. https://www.youtube.com/watch?v=ZcegvPYE2MI
+95. https://www.youtube.com/watch?v=eDoUahe4BLk
+96. https://www.youtube.com/watch?v=pK02W9y8PYo
+97. https://www.youtube.com/watch?v=48LrD1SW20I
+98. https://www.youtube.com/watch?v=U1tVnANCDH0
+99. https://www.youtube.com/watch?v=qHNzBdTr_54
+100. https://www.youtube.com/watch?v=EdrNo3w_EWc
+101. https://www.youtube.com/watch?v=PhbJLu0RFHQ
+102. https://www.youtube.com/watch?v=83O-aP6ISyM
+103. https://www.youtube.com/watch?v=a6GdcCYxZUE
+104. https://www.youtube.com/watch?v=QoBCtcWO02g
+105. https://www.youtube.com/watch?v=YW7yTzqedu8
+106. https://www.youtube.com/watch?v=RV9rlD6rHRo
+107. https://www.youtube.com/watch?v=D1PaYO1sC5k
+108. https://www.youtube.com/watch?v=ZdtU6TKD1qo
+109. https://www.youtube.com/watch?v=r1LI1-K08II
+110. https://www.youtube.com/watch?v=-oy55UWlbdw
+111. https://www.youtube.com/watch?v=GmHQGVD7KRQ
+112. https://www.youtube.com/watch?v=XgAMayF-JZY
+113. https://www.youtube.com/watch?v=2Q0RGjYCkq4
+114. https://www.youtube.com/watch?v=hRqyDD1291Y
+115. https://www.youtube.com/watch?v=iAYVVLHm5Oc
+116. https://www.youtube.com/watch?v=fcE9-dQyclc
+117. https://www.youtube.com/watch?v=ZdO00Y-u1y0
+118. https://www.youtube.com/watch?v=ueeIJcjWZh8
+119. https://www.youtube.com/watch?v=V4TXnvrhuZw
+120. https://www.youtube.com/watch?v=HR_6nbH4kkk
+121. https://www.youtube.com/watch?v=aMZv0uoHMPI
+122. https://www.youtube.com/watch?v=mNlNTmFAb70
+123. https://www.youtube.com/watch?v=t82NzpIxKkc
+124. https://www.youtube.com/watch?v=IInaPtwdNCQ
+125. https://www.youtube.com/watch?v=wwtt8lkMRDQ
+126. https://www.youtube.com/watch?v=4pm5C3erORo
+127. https://www.youtube.com/watch?v=f29w0p8enbw
+128. https://www.youtube.com/watch?v=xPpAYcPnegc
+129. https://www.youtube.com/watch?v=5qVOgUlbDM0
+130. https://www.youtube.com/watch?v=gpMwHtDwsCk
+131. https://www.youtube.com/watch?v=R5wx9gw-9lE
+132. https://www.youtube.com/watch?v=aV4jKPFOjvk
+133. https://www.youtube.com/watch?v=d5RKW3WSEb0
+134. https://www.youtube.com/watch?v=M5IMu7c5f_E
+135. https://www.youtube.com/watch?v=_VGmzvG7oq4
+136. https://www.youtube.com/watch?v=lLl9GkOScFc
+137. https://www.youtube.com/watch?v=2L0TjTIHEFo
+138. https://www.youtube.com/watch?v=S9BOuSHzQ6o
+139. https://www.youtube.com/watch?v=VKxv79VSJa8
+140. https://www.youtube.com/watch?v=JgTG1aoaB5s
+141. https://www.youtube.com/watch?v=RuFjY1MV4LM
+142. https://www.youtube.com/watch?v=BZ2nSULolKI
+143. https://www.youtube.com/watch?v=7lFBZQzu8nk
+144. https://www.youtube.com/watch?v=tbHAG-K2M04
+145. https://www.youtube.com/watch?v=sgXAQDTa3dA
+146. https://www.youtube.com/watch?v=N8U5bzSD65Q
+147. https://www.youtube.com/watch?v=QBESNoCeZWY
+148. https://www.youtube.com/watch?v=V_oZNWJKPZI
+149. https://www.youtube.com/watch?v=L9qh1-T_YVo
+150. https://www.youtube.com/watch?v=h8BrVhksQw8
+151. https://www.youtube.com/watch?v=ShdG7cgGA2M
+152. https://www.youtube.com/watch?v=oNV08CLn6zI
+153. https://www.youtube.com/watch?v=609vZAF0JVI
+154. https://www.youtube.com/watch?v=7laZlckl2i4

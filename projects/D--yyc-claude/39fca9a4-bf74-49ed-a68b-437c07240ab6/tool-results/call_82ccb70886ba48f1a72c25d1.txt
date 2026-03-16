@@ -1,0 +1,55 @@
+     1→import { Module } from '@nestjs/common';
+     2→import { ConfigModule } from '@nestjs/config';
+     3→import { ThrottlerModule } from '@nestjs/throttler';
+     4→
+     5→// Modules
+     6→import { AuthModule } from './modules/auth/auth.module';
+     7→import { UserModule } from './modules/user/user.module';
+     8→import { ChildModule } from './modules/child/child.module';
+     9→import { SubjectModule } from './modules/subject/subject.module';
+    10→import { MistakeModule } from './modules/mistake/mistake.module';
+    11→import { ReviewModule } from './modules/review/review.module';
+    12→import { PracticeModule } from './modules/practice/practice.module';
+    13→import { StatsModule } from './modules/stats/stats.module';
+    14→import { TagModule } from './modules/tag/tag.module';
+    15→
+    16→// Providers
+    17→import { PrismaService } from './common/services/prisma.service';
+    18→import { RedisService } from './common/services/redis.service';
+    19→
+    20→@Module({
+    21→  imports: [
+    22→    // 配置模块
+    23→    ConfigModule.forRoot({
+    24→      isGlobal: true,
+    25→      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+    26→    }),
+    27→
+    28→    // 限流模块
+    29→    ThrottlerModule.forRoot([
+    30→      {
+    31→        ttl: 60000, // 60秒
+    32→        limit: 100, // 最多100次请求
+    33→      },
+    34→    ]),
+    35→
+    36→    // 业务模块
+    37→    AuthModule,
+    38→    UserModule,
+    39→    ChildModule,
+    40→    SubjectModule,
+    41→    MistakeModule,
+    42→    ReviewModule,
+    43→    PracticeModule,
+    44→    StatsModule,
+    45→    TagModule,
+    46→  ],
+    47→  providers: [PrismaService, RedisService],
+    48→  exports: [PrismaService, RedisService],
+    49→})
+    50→export class AppModule {}
+    51→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

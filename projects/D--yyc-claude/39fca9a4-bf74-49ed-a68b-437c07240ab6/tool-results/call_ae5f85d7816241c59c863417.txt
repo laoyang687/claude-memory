@@ -1,0 +1,170 @@
+     1→import { Injectable, NotFoundException } from '@nestjs/common';
+     2→import { PrismaService } from '@/common/services/prisma.service';
+     3→import { CreateChildDto, UpdateChildDto } from './dto/child.dto';
+     4→
+     5→@Injectable()
+     6→export class ChildService {
+     7→  constructor(private prisma: PrismaService) {}
+     8→
+     9→  /**
+    10→   * 获取子账号列表
+    11→   */
+    12→  async findAll(parentId: number) {
+    13→    const children = await this.prisma.child.findMany({
+    14→      where: { parentId: BigInt(parentId), status: 1 },
+    15→      orderBy: { createdAt: 'desc' },
+    16→    });
+    17→
+    18→    // 获取每个孩子的统计信息
+    19→    const result = await Promise.all(
+    20→      children.map(async (child) => {
+    21→        const [totalMistakes, masteredCount] = await Promise.all([
+    22→          this.prisma.mistake.count({
+    23→            where: { childId: BigInt(child.id) },
+    24→          }),
+    25→          this.prisma.mistake.count({
+    26→            where: { childId: BigInt(child.id), mastered: true },
+    27→          }),
+    28→        ]);
+    29→
+    30→        return {
+    31→          id: Number(child.id),
+    32→          name: child.name,
+    33→          grade: child.grade,
+    34→          avatar: child.avatar,
+    35→          birthDate: child.birthDate,
+    36→          school: child.school,
+    37→          stats: {
+    38→            totalMistakes,
+    39→            masterRate: totalMistakes > 0
+    40→              ? Number(((masteredCount / totalMistakes) * 100).toFixed(1))
+    41→              : 0,
+    42→          },
+    43→        };
+    44→      }),
+    45→    );
+    46→
+    47→    return result;
+    48→  }
+    49→
+    50→  /**
+    51→   * 获取子账号详情
+    52→   */
+    53→  async findOne(id: number, parentId: number) {
+    54→    const child = await this.prisma.child.findFirst({
+    55→      where: { id: BigInt(id), parentId: BigInt(parentId) },
+    56→    });
+    57→
+    58→    if (!child) {
+    59→      throw new NotFoundException('Child not found');
+    60→    }
+    61→
+    62→    return {
+    63→      id: Number(child.id),
+    64→      name: child.name,
+    65→      grade: child.grade,
+    66→      avatar: child.avatar,
+    67→      birthDate: child.birthDate,
+    68→      school: child.school,
+    69→    };
+    70→  }
+    71→
+    72→  /**
+    73→   * 创建子账号
+    74→   */
+    75→  async create(parentId: number, dto: CreateChildDto) {
+    76→    const child = await this.prisma.child.create({
+    77→      data: {
+    78→        parentId: BigInt(parentId),
+    79→        name: dto.name,
+    80→        grade: dto.grade,
+    81→        avatar: dto.avatar,
+    82→        birthDate: dto.birthDate ? new Date(dto.birthDate) : null,
+    83→        school: dto.school,
+    84→      },
+    85→    });
+    86→
+    87→    return {
+    88→      id: Number(child.id),
+    89→      name: child.name,
+    90→      grade: child.grade,
+    91→      avatar: child.avatar,
+    92→    };
+    93→  }
+    94→
+    95→  /**
+    96→   * 更新子账号
+    97→   */
+    98→  async update(id: number, parentId: number, dto: UpdateChildDto) {
+    99→    const child = await this.prisma.child.findFirst({
+   100→      where: { id: BigInt(id), parentId: BigInt(parentId) },
+   101→    });
+   102→
+   103→    if (!child) {
+   104→      throw new NotFoundException('Child not found');
+   105→    }
+   106→
+   107→    const updated = await this.prisma.child.update({
+   108→      where: { id: BigInt(id) },
+   109→      data: {
+   110→        ...(dto.name && { name: dto.name }),
+   111→        ...(dto.grade && { grade: dto.grade }),
+   112→        ...(dto.avatar !== undefined && { avatar: dto.avatar }),
+   113→        ...(dto.birthDate && { birthDate: new Date(dto.birthDate) }),
+   114→        ...(dto.school !== undefined && { school: dto.school }),
+   115→      },
+   116→    });
+   117→
+   118→    return {
+   119→      id: Number(updated.id),
+   120→      name: updated.name,
+   121→      grade: updated.grade,
+   122→      avatar: updated.avatar,
+   123→    };
+   124→  }
+   125→
+   126→  /**
+   127→   * 删除子账号
+   128→   */
+   129→  async remove(id: number, parentId: number) {
+   130→    const child = await this.prisma.child.findFirst({
+   131→      where: { id: BigInt(id), parentId: BigInt(parentId) },
+   132→    });
+   133→
+   134→    if (!child) {
+   135→      throw new NotFoundException('Child not found');
+   136→    }
+   137→
+   138→    await this.prisma.child.delete({
+   139→      where: { id: BigInt(id) },
+   140→    });
+   141→
+   142→    return { message: 'Deleted successfully' };
+   143→  }
+   144→
+   145→  /**
+   146→   * 切换当前子账号
+   147→   */
+   148→  async switchChild(id: number, parentId: number) {
+   149→    const child = await this.prisma.child.findFirst({
+   150→      where: { id: BigInt(id), parentId: BigInt(parentId) },
+   151→    });
+   152→
+   153→    if (!child) {
+   154→      throw new NotFoundException('Child not found');
+   155→    }
+   156→
+   157→    // 返回子账号信息，token 生成在 auth 模块处理
+   158→    return {
+   159→      id: Number(child.id),
+   160→      name: child.name,
+   161→      grade: child.grade,
+   162→      avatar: child.avatar,
+   163→    };
+   164→  }
+   165→}
+   166→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

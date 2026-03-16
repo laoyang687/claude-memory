@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "sessionId": "d795f3eb-e663-417e-ace4-90edb548c7d7",
+      "fullPath": "C:\\Users\\wqj85\\.claude\\projects\\D--yyc-soft-history\\d795f3eb-e663-417e-ace4-90edb548c7d7.jsonl",
+      "fileMtime": 1768703762108,
+      "firstPrompt": "我要给七年级的儿子编写一个学习历史的软件，该文件夹内有我跟GPT探讨的架构，你有什么高见？",
+      "messageCount": 10,
+      "created": "2026-01-18T02:30:42.111Z",
+      "modified": "2026-01-18T02:36:01.936Z",
+      "gitBranch": "",
+      "projectPath": "D:\\yyc\\soft\\history",
+      "isSidechain": false
+    }
+  ]
+}

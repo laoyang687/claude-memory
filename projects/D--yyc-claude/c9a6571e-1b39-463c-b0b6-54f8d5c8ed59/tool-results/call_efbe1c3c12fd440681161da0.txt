@@ -1,0 +1,6 @@
+Fetching videos from: https://www.youtube.com/@DanKoeTalks
+
+Found 2 videos:
+1. https://www.youtube.com/watch?v=UCWXYDYv5STLk-zoxMP2I1Lw
+2. https://www.youtube.com/watch?v=UCWXYDYv5STLk-zoxMP2I1Lw
+Saved 2 video URLs to dan_koe_videos.txt

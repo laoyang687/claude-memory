@@ -1,0 +1,45 @@
+     1→{
+     2→  "name": "mistake-analyzer-miniprogram",
+     3→  "version": "1.0.0",
+     4→  "description": "错题分析器微信小程序",
+     5→  "main": "main.js",
+     6→  "scripts": {
+     7→    "dev:mp-weixin": "uni -p mp-weixin",
+     8→    "build:mp-weixin": "uni build -p mp-weixin",
+     9→    "dev:h5": "uni -p h5",
+    10→    "build:h5": "uni build -p h5"
+    11→  },
+    12→  "dependencies": {
+    13→    "@dcloudio/uni-app": "3.0.0-alpha-4020920231218001",
+    14→    "@dcloudio/uni-app-plus": "3.0.0-alpha-4020920231218001",
+    15→    "@dcloudio/uni-components": "3.0.0-alpha-4020920231218001",
+    16→    "@dcloudio/uni-h5": "3.0.0-alpha-4020920231218001",
+    17→    "@dcloudio/uni-mp-alipay": "3.0.0-alpha-4020920231218001",
+    18→    "@dcloudio/uni-mp-baidu": "3.0.0-alpha-4020920231218001",
+    19→    "@dcloudio/uni-mp-jd": "3.0.0-alpha-4020920231218001",
+    20→    "@dcloudio/uni-mp-kuaishou": "3.0.0-alpha-4020920231218001",
+    21→    "@dcloudio/uni-mp-lark": "3.0.0-alpha-4020920231218001",
+    22→    "@dcloudio/uni-mp-qq": "3.0.0-alpha-4020920231218001",
+    23→    "@dcloudio/uni-mp-toutiao": "3.0.0-alpha-4020920231218001",
+    24→    "@dcloudio/uni-mp-weixin": "3.0.0-alpha-4020920231218001",
+    25→    "@dcloudio/uni-mp-xhs": "3.0.0-alpha-4020920231218001",
+    26→    "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-4020920231218001",
+    27→    "pinia": "^2.1.7",
+    28→    "vue": "^3.3.11"
+    29→  },
+    30→  "devDependencies": {
+    31→    "@dcloudio/types": "^3.3.3",
+    32→    "@dcloudio/uni-automator": "3.0.0-alpha-4020920231218001",
+    33→    "@dcloudio/uni-cli-shared": "3.0.0-alpha-4020920231218001",
+    34→    "@dcloudio/vite-plugin-uni": "3.0.0-alpha-4020920231218001",
+    35→    "@vue/tsconfig": "^0.4.0",
+    36→    "sass": "^1.69.5",
+    37→    "typescript": "^5.3.3",
+    38→    "vite": "^5.0.10"
+    39→  }
+    40→}
+    41→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

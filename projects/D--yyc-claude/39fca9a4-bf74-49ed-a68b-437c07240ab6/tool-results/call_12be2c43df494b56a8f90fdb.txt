@@ -1,0 +1,293 @@
+     1→// Prisma Schema for Mistake Analyzer
+     2→// Database: SQLite (开发环境)
+     3→
+     4→generator client {
+     5→  provider = "prisma-client-js"
+     6→}
+     7→
+     8→datasource db {
+     9→  provider = "sqlite"
+    10→  url      = env("DATABASE_URL")
+    11→}
+    12→
+    13→// ==========================================
+    14→// 用户相关表
+    15→// ==========================================
+    16→
+    17→enum UserRole {
+    18→  student
+    19→  parent
+    20→  teacher
+    21→}
+    22→
+    23→model User {
+    24→  id        Int      @id @default(autoincrement())
+    25→  openid    String   @unique
+    26→  unionid   String?
+    27→  nickname  String?
+    28→  avatar    String?
+    29→  role      UserRole @default(student)
+    30→  phone     String?
+    31→  grade     String?
+    32→  status    Int      @default(1)
+    33→  createdAt DateTime @default(now()) @map("created_at")
+    34→  updatedAt DateTime @updatedAt @map("updated_at")
+    35→
+    36→  // 关系
+    37→  children      Child[]         @relation("ParentChildren")
+    38→  mistakes      Mistake[]
+    39→  reviewRecords ReviewRecord[]
+    40→  practiceRecords PracticeRecord[]
+    41→
+    42→  @@index([openid])
+    43→  @@index([grade])
+    44→  @@index([role])
+    45→  @@map("users")
+    46→}
+    47→
+    48→model Child {
+    49→  id        Int      @id @default(autoincrement())
+    50→  parentId  Int      @map("parent_id")
+    51→  name      String
+    52→  grade     String
+    53→  avatar    String?
+    54→  birthDate DateTime? @map("birth_date")
+    55→  school    String?
+    56→  status    Int      @default(1)
+    57→  createdAt DateTime @default(now()) @map("created_at")
+    58→  updatedAt DateTime @updatedAt @map("updated_at")
+    59→
+    60→  // 关系
+    61→  parent         User            @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
+    62→  mistakes       Mistake[]
+    63→  practiceRecords PracticeRecord[]
+    64→
+    65→  @@index([parentId])
+    66→  @@map("children")
+    67→}
+    68→
+    69→// ==========================================
+    70→// 科目与知识点表
+    71→// ==========================================
+    72→
+    73→model Subject {
+    74→  id        Int      @id @default(autoincrement())
+    75→  name      String
+    76→  code      String   @unique
+    77→  icon      String?
+    78→  color     String?
+    79→  sort      Int      @default(0)
+    80→  status    Int      @default(1)
+    81→  createdAt DateTime @default(now()) @map("created_at")
+    82→
+    83→  // 关系
+    84→  knowledgePoints KnowledgePoint[]
+    85→  mistakes        Mistake[]
+    86→  practiceRecords PracticeRecord[]
+    87→
+    88→  @@map("subjects")
+    89→}
+    90→
+    91→model KnowledgePoint {
+    92→  id         Int      @id @default(autoincrement())
+    93→  subjectId  Int      @map("subject_id")
+    94→  parentId   Int      @default(0) @map("parent_id")
+    95→  name       String
+    96→  gradeRange String?  @map("grade_range")
+    97→  level      Int      @default(1)
+    98→  sort       Int      @default(0)
+    99→  createdAt  DateTime @default(now()) @map("created_at")
+   100→
+   101→  // 关系
+   102→  subject  Subject  @relation(fields: [subjectId], references: [id])
+   103→  mistakes Mistake[]
+   104→
+   105→  @@index([subjectId])
+   106→  @@index([parentId])
+   107→  @@map("knowledge_points")
+   108→}
+   109→
+   110→// ==========================================
+   111→// 错题核心表
+   112→// ==========================================
+   113→
+   114→enum SourceType {
+   115→  exam
+   116→  homework
+   117→  practice
+   118→}
+   119→
+   120→enum QuestionType {
+   121→  choice
+   122→  fill
+   123→  essay
+   124→  calc
+   125→}
+   126→
+   127→enum WrongReason {
+   128→  concept    // 概念错误
+   129→  calc       // 计算错误
+   130→  careless   // 粗心大意
+   131→  unknown    // 未知
+   132→}
+   133→
+   134→model Mistake {
+   135→  id             Int         @id @default(autoincrement())
+   136→  userId         Int         @map("user_id")
+   137→  childId        Int?        @map("child_id")
+   138→  subjectId      Int         @map("subject_id")
+   139→  knowledgeIds   String?     @map("knowledge_ids")
+   140→  sourceType     SourceType  @default(exam) @map("source_type")
+   141→
+   142→  // 题目信息
+   143→  questionText   String      @map("question_text")
+   144→  questionImages String?     @map("question_images") // JSON string
+   145→  questionType   QuestionType? @map("question_type")
+   146→
+   147→  // 错误信息
+   148→  wrongAnswer    String?     @map("wrong_answer")
+   149→  wrongReason    WrongReason? @map("wrong_reason")
+   150→  aiAnalysis     String?     @map("ai_analysis")
+   151→
+   152→  // 正确信息
+   153→  correctAnswer  String?     @map("correct_answer")
+   154→  explanation    String?
+   155→  solutionImages String?     @map("solution_images") // JSON string
+   156→
+   157→  // 标签与分类
+   158→  tags           String?
+   159→  difficulty     Int         @default(3)
+   160→
+   161→  // 状态
+   162→  mastered       Boolean     @default(false) @map("mastered")
+   163→  reviewCount    Int         @default(0) @map("review_count")
+   164→  lastReviewAt   DateTime?   @map("last_review_at")
+   165→  nextReviewAt   DateTime?   @map("next_review_at")
+   166→
+   167→  // 时间
+   168→  createdAt      DateTime    @default(now()) @map("created_at")
+   169→  updatedAt      DateTime    @updatedAt @map("updated_at")
+   170→
+   171→  // 关系
+   172→  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+   173→  child        Child?         @relation(fields: [childId], references: [id])
+   174→  subject      Subject        @relation(fields: [subjectId], references: [id])
+   175→  reviewRecords ReviewRecord[]
+   176→
+   177→  @@index([userId, subjectId])
+   178→  @@index([childId])
+   179→  @@index([userId, nextReviewAt])
+   180→  @@index([userId, mastered])
+   181→  @@index([createdAt])
+   182→  @@map("mistakes")
+   183→}
+   184→
+   185→// ==========================================
+   186→// 复习记录表
+   187→// ==========================================
+   188→
+   189→enum ReviewResult {
+   190→  correct
+   191→  wrong
+   192→  partial
+   193→}
+   194→
+   195→model ReviewRecord {
+   196→  id        Int        @id @default(autoincrement())
+   197→  mistakeId Int        @map("mistake_id")
+   198→  userId    Int        @map("user_id")
+   199→  result    ReviewResult
+   200→  duration  Int? // 秒
+   201→  notes     String?
+   202→  createdAt DateTime   @default(now()) @map("created_at")
+   203→
+   204→  // 关系
+   205→  mistake  Mistake @relation(fields: [mistakeId], references: [id], onDelete: Cascade)
+   206→  user     User    @relation(fields: [userId], references: [id])
+   207→
+   208→  @@index([mistakeId])
+   209→  @@index([userId, createdAt])
+   210→  @@map("review_records")
+   211→}
+   212→
+   213→// ==========================================
+   214→// 练习相关表
+   215→// ==========================================
+   216→
+   217→model PracticeRecord {
+   218→  id            Int      @id @default(autoincrement())
+   219→  userId        Int      @map("user_id")
+   220→  childId       Int?     @map("child_id")
+   221→  name          String?
+   222→  subjectId     Int?     @map("subject_id")
+   223→  knowledgeIds  String?  @map("knowledge_ids")
+   224→  questionCount Int      @map("question_count")
+   225→  correctCount  Int      @map("correct_count")
+   226→  score         Float?
+   227→  duration      Int? // 秒
+   228→  createdAt     DateTime @default(now()) @map("created_at")
+   229→
+   230→  // 关系
+   231→  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+   232→  child   Child?           @relation(fields: [childId], references: [id])
+   233→  subject Subject?         @relation(fields: [subjectId], references: [id])
+   234→  details PracticeDetail[]
+   235→
+   236→  @@index([userId, createdAt])
+   237→  @@map("practice_records")
+   238→}
+   239→
+   240→model PracticeDetail {
+   241→  id            Int       @id @default(autoincrement())
+   242→  recordId      Int       @map("record_id")
+   243→  mistakeId     Int?      @map("mistake_id")
+   244→  questionText  String?   @map("question_text")
+   245→  questionType  String?   @map("question_type")
+   246→  options       String? // JSON string for choices
+   247→  userAnswer    String?   @map("user_answer")
+   248→  correctAnswer String?   @map("correct_answer")
+   249→  isCorrect     Boolean?  @map("is_correct")
+   250→  createdAt     DateTime  @default(now()) @map("created_at")
+   251→
+   252→  // 关系
+   253→  record PracticeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+   254→
+   255→  @@index([recordId])
+   256→  @@map("practice_details")
+   257→}
+   258→
+   259→// ==========================================
+   260→// 标签表
+   261→// ==========================================
+   262→
+   263→model Tag {
+   264→  id        Int      @id @default(autoincrement())
+   265→  userId    Int?     @map("user_id")
+   266→  name      String
+   267→  color     String   @default("#409EFF")
+   268→  sort      Int      @default(0)
+   269→  createdAt DateTime @default(now()) @map("created_at")
+   270→
+   271→  @@index([userId])
+   272→  @@map("tags")
+   273→}
+   274→
+   275→// ==========================================
+   276→// 系统配置表
+   277→// ==========================================
+   278→
+   279→model SystemConfig {
+   280→  id          Int      @id @default(autoincrement())
+   281→  configKey   String   @unique @map("config_key")
+   282→  configValue String?  @map("config_value")
+   283→  description String?
+   284→  createdAt   DateTime @default(now()) @map("created_at")
+   285→  updatedAt   DateTime @updatedAt @map("updated_at")
+   286→
+   287→  @@map("system_config")
+   288→}
+   289→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

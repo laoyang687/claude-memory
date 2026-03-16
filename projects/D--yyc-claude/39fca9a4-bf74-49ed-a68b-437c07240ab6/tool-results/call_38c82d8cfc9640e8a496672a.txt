@@ -1,0 +1,125 @@
+     1→import { Injectable } from '@nestjs/common';
+     2→import { PrismaService } from '@/common/services/prisma.service';
+     3→
+     4→@Injectable()
+     5→export class PracticeService {
+     6→  constructor(private prisma: PrismaService) {}
+     7→
+     8→  /**
+     9→   * 生成练习（基于错题推荐）
+    10→   */
+    11→  async generatePractice(userId: number, options: {
+    12→    subjectId?: number;
+    13→    knowledgeIds?: number[];
+    14→    questionCount: number;
+    15→    difficulty?: 'easy' | 'medium' | 'hard';
+    16→    mode?: 'weak' | 'random';
+    17→    childId?: number;
+    18→  }) {
+    19→    const { subjectId, knowledgeIds, questionCount, difficulty = 'medium', mode = 'weak', childId } = options;
+    20→
+    21→    // 构建查询条件
+    22→    const where: any = { userId: BigInt(userId), mastered: false };
+    23→
+    24→    if (subjectId) where.subjectId = subjectId;
+    25→    if (childId) where.childId = BigInt(childId);
+    26→    if (knowledgeIds && knowledgeIds.length > 0) {
+    27→      where.OR = knowledgeIds.map(id => ({
+    28→        knowledgeIds: { contains: String(id) }
+    29→      }));
+    30→    }
+    31→
+    32→    // 根据模式排序
+    33→    const orderBy: any = mode === 'weak'
+    34→      ? { reviewCount: 'desc' } // 薄弱点优先
+    35→      : { createdAt: 'desc' }; // 随机（最新优先）
+    36→
+    37→    // 获取推荐错题
+    38→    const mistakes = await this.prisma.mistake.findMany({
+    39→      where,
+    40→      include: { subject: true },
+    41→      orderBy,
+    42→      take: questionCount,
+    43→    });
+    44→
+    45→    return {
+    46→      practiceId: Date.now(), // 临时ID
+    47→      questions: mistakes.map(m => ({
+    48→        id: Number(m.id),
+    49→        type: m.questionType || 'essay',
+    50→        questionText: m.questionText,
+    51→        questionImages: m.questionImages ? JSON.parse(m.questionImages) : [],
+    52→        sourceMistakeId: Number(m.id),
+    53→        subject: {
+    54→          id: m.subject.id,
+    55→          name: m.subject.name,
+    56→        },
+    57→      })),
+    58→      estimatedDuration: mistakes.length * 120, // 估计每题2分钟
+    59→    };
+    60→  }
+    61→
+    62→  /**
+    63→   * 提交练习答案
+    64→   */
+    65→  async submitPractice(userId: number, practiceId: number, answers: Array<{
+    66→    questionId: number;
+    67→    answer: string;
+    68→  }>, duration: number) {
+    69→    // TODO: 实现练习提交逻辑
+    70→    // 1. 获取练习详情
+    71→    // 2. 批改答案
+    72→    // 3. 生成练习记录
+    73→    // 4. 返回结果
+    74→
+    75→    const correctCount = answers.filter(a => a.answer === 'correct').length;
+    76→
+    77→    return {
+    78→      recordId: Date.now(),
+    79→      score: (correctCount / answers.length) * 100,
+    80→      correctCount,
+    81→      totalCount: answers.length,
+    82→      wrongQuestions: [],
+    83→      recommendReview: [],
+    84→    };
+    85→  }
+    86→
+    87→  /**
+    88→   * 获取练习历史
+    89→   */
+    90→  async getHistory(userId: number, page = 1, size = 20) {
+    91→    const [total, list] = await Promise.all([
+    92→      this.prisma.practiceRecord.count({
+    93→        where: { userId: BigInt(userId) },
+    94→      }),
+    95→      this.prisma.practiceRecord.findMany({
+    96→        where: { userId: BigInt(userId) },
+    97→        include: { subject: true },
+    98→        orderBy: { createdAt: 'desc' },
+    99→        skip: (page - 1) * size,
+   100→        take: size,
+   101→      }),
+   102→    ]);
+   103→
+   104→    return {
+   105→      total,
+   106→      page,
+   107→      size,
+   108→      list: list.map(item => ({
+   109→        id: Number(item.id),
+   110→        name: item.name,
+   111→        subject: item.subject ? { id: item.subject.id, name: item.subject.name } : null,
+   112→        score: item.score ? Number(item.score) : null,
+   113→        questionCount: item.questionCount,
+   114→        correctCount: item.correctCount,
+   115→        duration: item.duration,
+   116→        createdAt: item.createdAt,
+   117→      })),
+   118→    };
+   119→  }
+   120→}
+   121→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

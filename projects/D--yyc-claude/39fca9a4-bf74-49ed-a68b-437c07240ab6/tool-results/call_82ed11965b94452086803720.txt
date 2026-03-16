@@ -1,0 +1,141 @@
+The file D:\yyc\claude\mistake-analyzer\backend\src\modules\user\user.service.ts has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+     1→import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+     2→import { PrismaService } from '@/common/services/prisma.service';
+     3→import { RedisService } from '@/common/services/redis.service';
+     4→import { UpdateProfileDto } from './dto/user.dto';
+     5→
+     6→@Injectable()
+     7→export class UserService {
+     8→  private readonly cachePrefix = 'user:';
+     9→
+    10→  constructor(
+    11→    private prisma: PrismaService,
+    12→    private redis: RedisService,
+    13→  ) {}
+    14→
+    15→  /**
+    16→   * 获取用户详情
+    17→   */
+    18→  async getProfile(userId: number) {
+    19→    const user = await this.prisma.user.findUnique({
+    20→      where: { id: userId },
+    21→    });
+    22→
+    23→    if (!user) {
+    24→      throw new NotFoundException('User not found');
+    25→    }
+    26→
+    27→    // 获取统计信息
+    28→    const [totalMistakes, masteredCount, todayReviewed, todayAdded] =
+    29→      await Promise.all([
+    30→        this.prisma.mistake.count({ where: { userId } }),
+    31→        this.prisma.mistake.count({
+    32→          where: { userId, mastered: true },
+    33→        }),
+    34→        this.getTodayReviewedCount(userId),
+    35→        this.getTodayAddedCount(userId),
+    36→      ]);
+    37→
+    38→    return {
+    39→      id: user.id,
+    40→      nickname: user.nickname,
+    41→      avatar: user.avatar,
+    42→      role: user.role,
+    43→      grade: user.grade,
+    44→      phone: this.maskPhone(user.phone),
+    45→      stats: {
+    46→        totalMistakes,
+    47→        masteredCount,
+    48→        masterRate: totalMistakes > 0
+    49→          ? Number(((masteredCount / totalMistakes) * 100).toFixed(1))
+    50→          : 0,
+    51→        reviewToday: todayReviewed,
+    52→        addedToday: todayAdded,
+    53→      },
+    54→    };
+    55→  }
+    56→
+    57→  /**
+    58→   * 更新用户信息
+    59→   */
+    60→  async updateProfile(userId: number, dto: UpdateProfileDto) {
+    61→    const user = await this.prisma.user.update({
+    62→      where: { id: userId },
+    63→      data: {
+    64→        ...(dto.nickname && { nickname: dto.nickname }),
+    65→        ...(dto.grade && { grade: dto.grade }),
+    66→        ...(dto.avatar && { avatar: dto.avatar }),
+    67→      },
+    68→    });
+    69→
+    70→    // 清除缓存
+    71→    await this.clearUserCache(userId);
+    72→
+    73→    return {
+    74→      id: user.id,
+    75→      nickname: user.nickname,
+    76→      avatar: user.avatar,
+    77→      grade: user.grade,
+    78→    };
+    79→  }
+    80→
+    81→  /**
+    82→   * 手机号脱敏
+    83→   */
+    84→  private maskPhone(phone: string | null): string | null {
+    85→    if (!phone) return null;
+    86→    return `${phone.slice(0, 3)}****${phone.slice(-4)}`;
+    87→  }
+    88→
+    89→  /**
+    90→   * 获取今日复习数量
+    91→   */
+    92→  private async getTodayReviewedCount(userId: number): Promise<number> {
+    93→    const today = new Date();
+    94→    today.setHours(0, 0, 0, 0);
+    95→    const tomorrow = new Date(today);
+    96→    tomorrow.setDate(tomorrow.getDate() + 1);
+    97→
+    98→    return this.prisma.reviewRecord.count({
+    99→      where: {
+   100→        userId,
+   101→        createdAt: { gte: today, lt: tomorrow },
+   102→      },
+   103→    });
+   104→  }
+   105→
+   106→  /**
+   107→   * 获取今日添加错题数量
+   108→   */
+   109→  private async getTodayAddedCount(userId: number): Promise<number> {
+   110→    const today = new Date();
+   111→    today.setHours(0, 0, 0, 0);
+   112→    const tomorrow = new Date(today);
+   113→    tomorrow.setDate(tomorrow.getDate() + 1);
+   114→
+   115→    return this.prisma.mistake.count({
+   116→      where: {
+   117→        userId,
+   118→        createdAt: { gte: today, lt: tomorrow },
+   119→      },
+   120→    });
+   121→  }
+   122→
+   123→  /**
+   124→   * 清除用户缓存
+   125→   */
+   126→  private async clearUserCache(userId: number): Promise<void> {
+   127→    const key = `${this.cachePrefix}${userId}`;
+   128→    await this.redis.del(key);
+   129→  }
+   130→
+   131→  /**
+   132→   * 通过 ID 获取用户（内部调用）
+   133→   */
+   134→  async findById(userId: number) {
+   135→    return this.prisma.user.findUnique({
+   136→      where: { id: userId },
+   137→    });
+   138→  }
+   139→}
+   140→

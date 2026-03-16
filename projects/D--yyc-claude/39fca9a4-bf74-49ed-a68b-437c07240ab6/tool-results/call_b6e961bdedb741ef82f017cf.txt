@@ -1,0 +1,4 @@
+FINDSTR: �޷��� N:/
+FINDSTR: �޷��� BigInt(
+FINDSTR: �޷��� */*.ts
+FINDSTR: �޷��� 2

@@ -1,0 +1,171 @@
+     1→import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+     2→import Redis from 'ioredis';
+     3→
+     4→@Injectable()
+     5→export class RedisService extends Redis implements OnModuleInit, OnModuleDestroy {
+     6→  private readonly logger = new Logger(RedisService.name);
+     7→
+     8→  constructor() {
+     9→    super({
+    10→      host: process.env.REDIS_HOST || 'localhost',
+    11→      port: parseInt(process.env.REDIS_PORT || '6379'),
+    12→      password: process.env.REDIS_PASSWORD || undefined,
+    13→      db: parseInt(process.env.REDIS_DB || '0'),
+    14→      retryStrategy: (times) => {
+    15→        const delay = Math.min(times * 50, 2000);
+    16→        return delay;
+    17→      },
+    18→    });
+    19→  }
+    20→
+    21→  async onModuleInit() {
+    22→    this.on('connect', () => {
+    23→      this.logger.log('Redis connected successfully');
+    24→    });
+    25→
+    26→    this.on('error', (err) => {
+    27→      this.logger.error('Redis connection error', err);
+    28→    });
+    29→
+    30→    try {
+    31→      await this.ping();
+    32→      this.logger.log('Redis ping successful');
+    33→    } catch (error) {
+    34→      this.logger.warn('Redis ping failed, service may not be available');
+    35→    }
+    36→  }
+    37→
+    38→  async onModuleDestroy() {
+    39→    await this.quit();
+    40→    this.logger.log('Redis disconnected');
+    41→  }
+    42→
+    43→  /**
+    44→   * 设置缓存
+    45→   * @param key 键
+    46→   * @param value 值（自动序列化）
+    47→   * @param ttl 过期时间（秒）
+    48→   */
+    49→  async set(key: string, value: any, ttl?: number): Promise<'OK'> {
+    50→    const serialized = JSON.stringify(value);
+    51→    if (ttl) {
+    52→      return this.setex(key, ttl, serialized);
+    53→    }
+    54→    return this.set(key, serialized);
+    55→  }
+    56→
+    57→  /**
+    58→   * 获取缓存（自动反序列化）
+    59→   * @param key 键
+    60→   */
+    61→  async get<T = any>(key: string): Promise<T | null> {
+    62→    const value = await this.get(key);
+    63→    if (!value) return null;
+    64→    try {
+    65→      return JSON.parse(value) as T;
+    66→    } catch {
+    67→      return value as T;
+    68→    }
+    69→  }
+    70→
+    71→  /**
+    72→   * 删除缓存
+    73→   * @param keys 键（支持多个）
+    74→   */
+    75→  async del(...keys: string[]): Promise<number> {
+    76→    return this.del(...keys);
+    77→  }
+    78→
+    79→  /**
+    80→   * 检查键是否存在
+    81→   * @param key 键
+    82→   */
+    83→  async exists(key: string): Promise<number> {
+    84→    return this.exists(key);
+    85→  }
+    86→
+    87→  /**
+    88→   * 设置过期时间
+    89→   * @param key 键
+    90→   * @param ttl 过期时间（秒）
+    91→   */
+    92→  async expire(key: string, ttl: number): Promise<number> {
+    93→    return this.expire(key, ttl);
+    94→  }
+    95→
+    96→  /**
+    97→   * 原子递增
+    98→   * @param key 键
+    99→   */
+   100→  async incr(key: string): Promise<number> {
+   101→    return this.incr(key);
+   102→  }
+   103→
+   104→  /**
+   105→   * 原子递减
+   106→   * @param key 键
+   107→   */
+   108→  async decr(key: string): Promise<number> {
+   109→    return this.decr(key);
+   110→  }
+   111→
+   112→  /**
+   113→   * 添加到集合
+   114→   * @param key 键
+   115→   * @param members 成员
+   116→   */
+   117→  async sadd(key: string, ...members: string[]): Promise<number> {
+   118→    return this.sadd(key, ...members);
+   119→  }
+   120→
+   121→  /**
+   122→   * 从集合移除
+   123→   * @param key 键
+   124→   * @param members 成员
+   125→   */
+   126→  async srem(key: string, ...members: string[]): Promise<number> {
+   127→    return this.srem(key, ...members);
+   128→  }
+   129→
+   130→  /**
+   131→   * 获取集合所有成员
+   132→   * @param key 键
+   133→   */
+   134→  async smembers(key: string): Promise<string[]> {
+   135→    return this.smembers(key);
+   136→  }
+   137→
+   138→  /**
+   139→   * 有序集合添加
+   140→   * @param key 键
+   141→   * @param score 分数
+   142→   * @param member 成员
+   143→   */
+   144→  async zadd(key: string, score: number, member: string): Promise<number> {
+   145→    return this.zadd(key, score, member);
+   146→  }
+   147→
+   148→  /**
+   149→   * 有序集合范围查询
+   150→   * @param key 键
+   151→   * @param start 开始
+   152→   * @param stop 结束
+   153→   */
+   154→  async zrange(key: string, start: number, stop: number): Promise<string[]> {
+   155→    return this.zrange(key, start, stop);
+   156→  }
+   157→
+   158→  /**
+   159→   * 有序集合删除
+   160→   * @param key 键
+   161→   * @param members 成员
+   162→   */
+   163→  async zrem(key: string, ...members: string[]): Promise<number> {
+   164→    return this.zrem(key, ...members);
+   165→  }
+   166→}
+   167→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

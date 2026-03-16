@@ -1,0 +1,84 @@
+The file D:\yyc\claude\mistake-analyzer\backend\src\modules\tag\tag.service.ts has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+     1→import { Injectable } from '@nestjs/common';
+     2→import { PrismaService } from '@/common/services/prisma.service';
+     3→import { CreateTagDto } from './dto/tag.dto';
+     4→
+     5→@Injectable()
+     6→export class TagService {
+     7→  constructor(private prisma: PrismaService) {}
+     8→
+     9→  /**
+    10→   * 获取标签列表
+    11→   */
+    12→  async findAll(userId?: number) {
+    13→    const where = userId ? { userId } : { userId: null };
+    14→
+    15→    const tags = await this.prisma.tag.findMany({
+    16→      where,
+    17→      orderBy: { sort: 'asc' },
+    18→    });
+    19→
+    20→    // 获取每个标签的使用次数
+    21→    const result = await Promise.all(
+    22→      tags.map(async (tag) => {
+    23→        const count = await this.prisma.mistake.count({
+    24→          where: {
+    25→            tags: { contains: tag.name },
+    26→          },
+    27→        });
+    28→
+    29→        return {
+    30→          id: tag.id,
+    31→          name: tag.name,
+    32→          color: tag.color,
+    33→          count,
+    34→        };
+    35→      }),
+    36→    );
+    37→
+    38→    return result;
+    39→  }
+    40→
+    41→  /**
+    42→   * 创建标签
+    43→   */
+    44→  async create(userId: number, dto: CreateTagDto) {
+    45→    const tag = await this.prisma.tag.create({
+    46→      data: {
+    47→        userId,
+    48→        name: dto.name,
+    49→        color: dto.color || '#409EFF',
+    50→        sort: 0,
+    51→      },
+    52→    });
+    53→
+    54→    return {
+    55→      id: tag.id,
+    56→      name: tag.name,
+    57→      color: tag.color,
+    58→    };
+    59→  }
+    60→
+    61→  /**
+    62→   * 删除标签
+    63→   */
+    64→  async remove(id: number, userId: number) {
+    65→    const tag = await this.prisma.tag.findFirst({
+    66→      where: {
+    67→        id,
+    68→        OR: [{ userId }, { userId: null }],
+    69→      },
+    70→    });
+    71→
+    72→    if (!tag) {
+    73→      throw new Error('Tag not found');
+    74→    }
+    75→
+    76→    await this.prisma.tag.delete({
+    77→      where: { id },
+    78→    });
+    79→
+    80→    return { message: 'Deleted successfully' };
+    81→  }
+    82→}
+    83→

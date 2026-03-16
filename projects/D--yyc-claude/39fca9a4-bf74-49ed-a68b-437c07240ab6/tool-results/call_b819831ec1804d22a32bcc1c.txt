@@ -1,0 +1,93 @@
+     1→{
+     2→  "name": "mistake-analyzer-backend",
+     3→  "version": "1.0.0",
+     4→  "description": "错题分析器后端服务",
+     5→  "author": "wqj85",
+     6→  "private": true,
+     7→  "license": "MIT",
+     8→  "scripts": {
+     9→    "build": "nest build",
+    10→    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    11→    "start": "nest start",
+    12→    "start:dev": "nest start --watch",
+    13→    "start:debug": "nest start --debug --watch",
+    14→    "start:prod": "node dist/main",
+    15→    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    16→    "test": "jest",
+    17→    "test:watch": "jest --watch",
+    18→    "test:cov": "jest --coverage",
+    19→    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    20→    "test:e2e": "jest --config ./test/jest-e2e.json",
+    21→    "prisma:generate": "prisma generate",
+    22→    "prisma:migrate": "prisma migrate dev",
+    23→    "prisma:studio": "prisma studio",
+    24→    "prisma:seed": "ts-node prisma/seed.ts"
+    25→  },
+    26→  "dependencies": {
+    27→    "@nestjs/common": "^10.3.0",
+    28→    "@nestjs/core": "^10.3.0",
+    29→    "@nestjs/platform-express": "^10.3.0",
+    30→    "@nestjs/config": "^3.1.1",
+    31→    "@nestjs/jwt": "^10.2.0",
+    32→    "@nestjs/passport": "^10.0.3",
+    33→    "@nestjs/swagger": "^7.2.0",
+    34→    "@nestjs/throttler": "^5.1.1",
+    35→    "@prisma/client": "^5.8.0",
+    36→    "passport": "^0.7.0",
+    37→    "passport-jwt": "^4.0.1",
+    38→    "bcrypt": "^5.1.1",
+    39→    "class-validator": "^0.14.1",
+    40→    "class-transformer": "^0.5.1",
+    41→    "redis": "^4.6.12",
+    42→    "ioredis": "^5.3.2",
+    43→    "axios": "^1.6.5",
+    44→    "dayjs": "^1.11.10",
+    45→    "uuid": "^9.0.1",
+    46→    "multer": "^1.4.5-lts.1",
+    47→    "sharp": "^0.33.1",
+    48→    "qrcode": "^1.5.3"
+    49→  },
+    50→  "devDependencies": {
+    51→    "@nestjs/cli": "^10.2.1",
+    52→    "@nestjs/schematics": "^10.1.0",
+    53→    "@nestjs/testing": "^10.3.0",
+    54→    "@types/express": "^4.17.21",
+    55→    "@types/jest": "^29.5.11",
+    56→    "@types/node": "^20.10.6",
+    57→    "@types/passport-jwt": "^4.0.0",
+    58→    "@types/bcrypt": "^5.0.2",
+    59→    "@types/multer": "^1.4.11",
+    60→    "@types/qrcode": "^1.5.5",
+    61→    "@types/uuid": "^9.0.7",
+    62→    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    63→    "@typescript-eslint/parser": "^6.18.1",
+    64→    "eslint": "^8.56.0",
+    65→    "eslint-config-prettier": "^9.1.0",
+    66→    "eslint-plugin-prettier": "^5.1.2",
+    67→    "jest": "^29.7.0",
+    68→    "prettier": "^3.1.1",
+    69→    "prisma": "^5.8.0",
+    70→    "source-map-support": "^0.5.21",
+    71→    "ts-jest": "^29.1.1",
+    72→    "ts-loader": "^9.5.1",
+    73→    "ts-node": "^10.9.2",
+    74→    "tsconfig-paths": "^4.2.0",
+    75→    "typescript": "^5.3.3"
+    76→  },
+    77→  "jest": {
+    78→    "moduleFileExtensions": ["js", "json", "ts"],
+    79→    "rootDir": "src",
+    80→    "testRegex": ".*\\.spec\\.ts$",
+    81→    "transform": {
+    82→      "^.+\\.(t|j)s$": "ts-jest"
+    83→    },
+    84→    "collectCoverageFrom": ["**/*.(t|j)s"],
+    85→    "coverageDirectory": "../coverage",
+    86→    "testEnvironment": "node"
+    87→  }
+    88→}
+    89→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>

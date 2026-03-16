@@ -1,0 +1,257 @@
+The file D:\yyc\claude\mistake-analyzer\backend\prisma\schema.prisma has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+     1→// Prisma Schema for Mistake Analyzer
+     2→// Database: SQLite (开发环境)
+     3→
+     4→generator client {
+     5→  provider = "prisma-client-js"
+     6→}
+     7→
+     8→datasource db {
+     9→  provider = "sqlite"
+    10→  url      = env("DATABASE_URL")
+    11→}
+    12→
+    13→// ==========================================
+    14→// 用户相关表
+    15→// ==========================================
+    16→
+    17→model User {
+    18→  id        Int      @id @default(autoincrement())
+    19→  openid    String   @unique
+    20→  unionid   String?
+    21→  nickname  String?
+    22→  avatar    String?
+    23→  role      String   @default("student") // student, parent, teacher
+    24→  phone     String?
+    25→  grade     String?
+    26→  status    Int      @default(1)
+    27→  createdAt DateTime @default(now()) @map("created_at")
+    28→  updatedAt DateTime @updatedAt @map("updated_at")
+    29→
+    30→  // 关系
+    31→  children      Child[]         @relation("ParentChildren")
+    32→  mistakes      Mistake[]
+    33→  reviewRecords ReviewRecord[]
+    34→  practiceRecords PracticeRecord[]
+    35→
+    36→  @@index([openid])
+    37→  @@index([grade])
+    38→  @@index([role])
+    39→  @@map("users")
+    40→}
+    41→
+    42→model Child {
+    43→  id        Int      @id @default(autoincrement())
+    44→  parentId  Int      @map("parent_id")
+    45→  name      String
+    46→  grade     String
+    47→  avatar    String?
+    48→  birthDate DateTime? @map("birth_date")
+    49→  school    String?
+    50→  status    Int      @default(1)
+    51→  createdAt DateTime @default(now()) @map("created_at")
+    52→  updatedAt DateTime @updatedAt @map("updated_at")
+    53→
+    54→  // 关系
+    55→  parent         User            @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
+    56→  mistakes       Mistake[]
+    57→  practiceRecords PracticeRecord[]
+    58→
+    59→  @@index([parentId])
+    60→  @@map("children")
+    61→}
+    62→
+    63→// ==========================================
+    64→// 科目与知识点表
+    65→// ==========================================
+    66→
+    67→model Subject {
+    68→  id        Int      @id @default(autoincrement())
+    69→  name      String
+    70→  code      String   @unique
+    71→  icon      String?
+    72→  color     String?
+    73→  sort      Int      @default(0)
+    74→  status    Int      @default(1)
+    75→  createdAt DateTime @default(now()) @map("created_at")
+    76→
+    77→  // 关系
+    78→  knowledgePoints KnowledgePoint[]
+    79→  mistakes        Mistake[]
+    80→  practiceRecords PracticeRecord[]
+    81→
+    82→  @@map("subjects")
+    83→}
+    84→
+    85→model KnowledgePoint {
+    86→  id         Int      @id @default(autoincrement())
+    87→  subjectId  Int      @map("subject_id")
+    88→  parentId   Int      @default(0) @map("parent_id")
+    89→  name       String
+    90→  gradeRange String?  @map("grade_range")
+    91→  level      Int      @default(1)
+    92→  sort       Int      @default(0)
+    93→  createdAt  DateTime @default(now()) @map("created_at")
+    94→
+    95→  // 关系
+    96→  subject  Subject  @relation(fields: [subjectId], references: [id])
+    97→
+    98→  @@index([subjectId])
+    99→  @@index([parentId])
+   100→  @@map("knowledge_points")
+   101→}
+   102→
+   103→// ==========================================
+   104→// 错题核心表
+   105→// ==========================================
+   106→
+   107→model Mistake {
+   108→  id             Int      @id @default(autoincrement())
+   109→  userId         Int      @map("user_id")
+   110→  childId        Int?     @map("child_id")
+   111→  subjectId      Int      @map("subject_id")
+   112→  knowledgeIds   String?  @map("knowledge_ids")
+   113→  sourceType     String   @default("exam") @map("source_type") // exam, homework, practice
+   114→
+   115→  // 题目信息
+   116→  questionText   String   @map("question_text")
+   117→  questionImages String?  @map("question_images") // JSON string
+   118→  questionType   String?  @map("question_type") // choice, fill, essay, calc
+   119→
+   120→  // 错误信息
+   121→  wrongAnswer    String?  @map("wrong_answer")
+   122→  wrongReason    String?  @map("wrong_reason") // concept, calc, careless, unknown
+   123→  aiAnalysis     String?  @map("ai_analysis")
+   124→
+   125→  // 正确信息
+   126→  correctAnswer  String?  @map("correct_answer")
+   127→  explanation    String?
+   128→  solutionImages String?  @map("solution_images") // JSON string
+   129→
+   130→  // 标签与分类
+   131→  tags           String?
+   132→  difficulty     Int      @default(3)
+   133→
+   134→  // 状态
+   135→  mastered       Boolean  @default(false) @map("mastered")
+   136→  reviewCount    Int      @default(0) @map("review_count")
+   137→  lastReviewAt   DateTime? @map("last_review_at")
+   138→  nextReviewAt   DateTime? @map("next_review_at")
+   139→
+   140→  // 时间
+   141→  createdAt      DateTime @default(now()) @map("created_at")
+   142→  updatedAt      DateTime @updatedAt @map("updated_at")
+   143→
+   144→  // 关系
+   145→  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+   146→  child        Child?         @relation(fields: [childId], references: [id])
+   147→  subject      Subject        @relation(fields: [subjectId], references: [id])
+   148→  reviewRecords ReviewRecord[]
+   149→
+   150→  @@index([userId, subjectId])
+   151→  @@index([childId])
+   152→  @@index([userId, nextReviewAt])
+   153→  @@index([userId, mastered])
+   154→  @@index([createdAt])
+   155→  @@map("mistakes")
+   156→}
+   157→
+   158→// ==========================================
+   159→// 复习记录表
+   160→// ==========================================
+   161→
+   162→model ReviewRecord {
+   163→  id        Int      @id @default(autoincrement())
+   164→  mistakeId Int      @map("mistake_id")
+   165→  userId    Int      @map("user_id")
+   166→  result    String // correct, wrong, partial
+   167→  duration  Int? // 秒
+   168→  notes     String?
+   169→  createdAt DateTime @default(now()) @map("created_at")
+   170→
+   171→  // 关系
+   172→  mistake  Mistake @relation(fields: [mistakeId], references: [id], onDelete: Cascade)
+   173→  user     User    @relation(fields: [userId], references: [id])
+   174→
+   175→  @@index([mistakeId])
+   176→  @@index([userId, createdAt])
+   177→  @@map("review_records")
+   178→}
+   179→
+   180→// ==========================================
+   181→// 练习相关表
+   182→// ==========================================
+   183→
+   184→model PracticeRecord {
+   185→  id            Int      @id @default(autoincrement())
+   186→  userId        Int      @map("user_id")
+   187→  childId       Int?     @map("child_id")
+   188→  name          String?
+   189→  subjectId     Int?     @map("subject_id")
+   190→  knowledgeIds  String?  @map("knowledge_ids")
+   191→  questionCount Int      @map("question_count")
+   192→  correctCount  Int      @map("correct_count")
+   193→  score         Float?
+   194→  duration      Int? // 秒
+   195→  createdAt     DateTime @default(now()) @map("created_at")
+   196→
+   197→  // 关系
+   198→  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+   199→  child   Child?           @relation(fields: [childId], references: [id])
+   200→  subject Subject?         @relation(fields: [subjectId], references: [id])
+   201→  details PracticeDetail[]
+   202→
+   203→  @@index([userId, createdAt])
+   204→  @@map("practice_records")
+   205→}
+   206→
+   207→model PracticeDetail {
+   208→  id            Int      @id @default(autoincrement())
+   209→  recordId      Int      @map("record_id")
+   210→  mistakeId     Int?     @map("mistake_id")
+   211→  questionText  String?  @map("question_text")
+   212→  questionType  String?  @map("question_type")
+   213→  options       String? // JSON string for choices
+   214→  userAnswer    String?  @map("user_answer")
+   215→  correctAnswer String?  @map("correct_answer")
+   216→  isCorrect     Boolean? @map("is_correct")
+   217→  createdAt     DateTime @default(now()) @map("created_at")
+   218→
+   219→  // 关系
+   220→  record PracticeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+   221→
+   222→  @@index([recordId])
+   223→  @@map("practice_details")
+   224→}
+   225→
+   226→// ==========================================
+   227→// 标签表
+   228→// ==========================================
+   229→
+   230→model Tag {
+   231→  id        Int      @id @default(autoincrement())
+   232→  userId    Int?     @map("user_id")
+   233→  name      String
+   234→  color     String   @default("#409EFF")
+   235→  sort      Int      @default(0)
+   236→  createdAt DateTime @default(now()) @map("created_at")
+   237→
+   238→  @@index([userId])
+   239→  @@map("tags")
+   240→}
+   241→
+   242→// ==========================================
+   243→// 系统配置表
+   244→// ==========================================
+   245→
+   246→model SystemConfig {
+   247→  id          Int      @id @default(autoincrement())
+   248→  configKey   String   @unique @map("config_key")
+   249→  configValue String?  @map("config_value")
+   250→  description String?
+   251→  createdAt   DateTime @default(now()) @map("created_at")
+   252→  updatedAt   DateTime @updatedAt @map("updated_at")
+   253→
+   254→  @@map("system_config")
+   255→}
+   256→
