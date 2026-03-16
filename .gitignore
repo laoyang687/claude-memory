@@ -22,3 +22,6 @@ Thumbs.db
 *_token*
 *.key
 *.pem
+
+# 会话记录 - 太大，不需要同步
+*.jsonl
