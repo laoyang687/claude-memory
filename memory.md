@@ -40,3 +40,19 @@
 - **自动备份时间**：每天下午 6:00（用户6点后下班）
 - **手动备份**：用户晚上关机前，提醒执行 `git push`
 - **Mac恢复命令**：`gh repo clone laoyang687/claude-memory ~/.claude`
+
+### 备份命令
+
+**手动备份（每天关机前）：**
+```bash
+cd ~/.claude && git add memory.md && git commit -m "更新记忆" && git push
+```
+
+**设置自动备份（下午6点）：**
+```
+使用 Claude 的 /cron 功能：
+cron: "0 18 * * *"
+prompt: "请执行记忆备份：cd ~/.claude && git add memory.md && git commit -m '自动备份记忆' && git push。完成后告诉用户：记忆已自动备份。"
+```
+
+**注意**：自动备份是会话级别的，关闭 Claude 后会失效。下次打开时需要重新设置。
