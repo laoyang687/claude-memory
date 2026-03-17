@@ -36,6 +36,7 @@
 
 ### 记忆备份约定
 - **备份仓库**：https://github.com/laoyang687/claude-memory
+- **文件位置**：仓库根目录 `memory.md`
 - **自动备份时间**：每天下午 6:00（用户6点后下班）
 - **手动备份**：用户晚上关机前，提醒执行 `git push`
 - **Mac恢复命令**：`gh repo clone laoyang687/claude-memory ~/.claude`
