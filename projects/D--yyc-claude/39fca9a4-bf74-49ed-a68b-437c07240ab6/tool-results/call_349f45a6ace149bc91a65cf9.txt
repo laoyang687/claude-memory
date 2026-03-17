@@ -1,3 +1,0 @@
-Exit code 125
-timeout: invalid time interval ‘/t’
-Try 'timeout --help' for more information.

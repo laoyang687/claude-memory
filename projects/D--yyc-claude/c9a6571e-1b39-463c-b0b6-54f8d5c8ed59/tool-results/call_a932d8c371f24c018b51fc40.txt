@@ -1,5 +1,0 @@
-Exit code 1
-Traceback (most recent call last):
-  File "D:\yyc\claude\create_presentation.py", line 7, in <module>
-    from pptx.dml.color import RgbColor
-ImportError: cannot import name 'RgbColor' from 'pptx.dml.color' (C:\Users\wqj85\AppData\Roaming\Python\Python313\site-packages\pptx\dml\color.py)

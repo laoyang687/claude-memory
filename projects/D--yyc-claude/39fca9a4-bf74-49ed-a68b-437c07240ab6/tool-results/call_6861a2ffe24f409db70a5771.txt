@@ -1,6 +1,0 @@
-Exit code 1
-npm error code ETARGET
-npm error notarget No matching version found for @dcloudio/uni-app@3.0.0-alpha-4020920231218001.
-npm error notarget In most cases you or one of your dependencies are requesting
-npm error notarget a package version that doesn't exist.
-npm error A complete log of this run can be found in: C:\Users\wqj85\AppData\Local\npm-cache\_logs\2026-02-07T00_07_53_842Z-debug-0.log

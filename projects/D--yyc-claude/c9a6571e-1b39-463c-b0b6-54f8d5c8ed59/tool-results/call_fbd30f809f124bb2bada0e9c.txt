@@ -1,1 +1,0 @@
-Command running in background with ID: b5d175a. Output is being written to: C:\Users\wqj85\AppData\Local\Temp\claude\D--yyc-claude\tasks\b5d175a.output
