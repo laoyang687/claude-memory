@@ -108,9 +108,8 @@ type: project
 ## 任务清单
 
 ### 待执行
-- [ ] 把项目源码拉到本地（用户需要在服务器打包+scp下载）
-- [ ] 配置HTTPS/SSL证书（Let's Encrypt）
-- [ ] 开发付费/会员系统（后端API + 前端UI + 微信支付）
+- [ ] 接入支付路由到main.py + 添加网站端登录（手机号+验证码）
+- [ ] 前端加登录/付费界面
 - [ ] 前端UI升级（美化 + 移动端适配 + 登录注册界面）
 - [ ] SEO优化和内容引流
 
@@ -119,6 +118,12 @@ type: project
 - [x] 产品方案设计
 - [x] 服务器探索和现状分析
 - [x] 执行计划制定
+- [x] 把项目源码拉到本地（D:\yyc\gaokao-advisor-skill\）
+- [x] 配置HTTPS/SSL证书（阿里云免费证书，2026-04-01完成）
+  - Let's Encrypt certbot失败（阿里云安全组阻断）
+  - 改用阿里云免费SSL证书 + DNS验证成功
+  - Nginx配置HTTPS + HTTP自动跳转HTTPS
+  - 证书文件：/etc/nginx/ssl/gaokao.pem + gaokao.key
 
 ---
 
