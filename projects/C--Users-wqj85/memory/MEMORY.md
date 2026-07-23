@@ -20,8 +20,25 @@
 ## 内容资产
 - [故事库](杨运才的故事库.md) — 9个建立信任的故事，用于打造个人IP
 
+## 工具配置
+- [Notion MCP](notion_mcp.md) — Notion MCP 已配置，Token 已存，重启 Claude 后生效
+- [lark-cli 开机自启](lark_cli_startup.md) — 每次开机自动检查飞书认证，已设置 Windows Startup 脚本
+- [代理/梯子配置](clash-proxy-setup.md) — Clash Verge(7897)已替代 CFW;WallessPKU 机场 2026-07-03 跑路,用 Verge 缓存真节点续命
+
+## 个人IP定位（统领所有项目）
+- [个人IP第一性原理](ip-first-principles.md) — 最底层规律：做vs是/信任规模化/一致性/三个断裂陷阱，做内容前的校准锚
+- [一页定位文档](lao-yang-ip-positioning.md) — "AI时代普通人商业系统教练"，2026-07-23定稿，回答"为什么是你"
+- [商业系统陪跑MVP](coaching-mvp-outline.md) — 顶端变现产品，已定999元/线上小班/等栏目流量再开
+- [创业四刀·内容资产包](创业四刀-内容资产.md) — 创业四刀方法论(需求/归因/现金流/天花板)+通用采访提纲+口播脚本+自检清单，2026-07-23
+
 ## 进行中的项目
 - [高考AI工具站](gaokao_project.md) — gaokao-baoming.com，$100→$10,000计划，2026-04-01启动
+- [100位普通人SOP](100-ordinary-people-sop.md) — 采访100位普通人打造个人故事，基于一条徐沪生方法论逆向拆解，2026-06-10创建
+- [一条案例拆解](yitiao-case-study.md) — 一条经典视频逐秒拆解，学习参考模板
+- [001号选题](person-001-windpower.md) — 风电项目经理，创业失败学AI，24/25分🔥；含行业反差备选Hook（A/B两版）+8问深挖提纲
+- [001号拍摄脚本](001-shooting-script.md) — 反差英雄线，3分钟完整旁白+镜头清单+拍摄日程
+- [000号·老杨自己的故事](000-lao-yang-story.md) — 栏目创始人的故事，"普通人的重启"最完整样本，25/25🔥
+- [000号拍摄脚本](000-shooting-script.md) — 8幕完整脚本，可直接拍摄，含画面+问答+金句
 
 ---
 
