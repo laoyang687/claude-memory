@@ -10,7 +10,7 @@ type: project
 目标：把$100变成$10,000。用户（杨运才）出5%精力当代理人，Claude出95%执行力。
 
 ## 域名与部署
-- **域名**：gaokao-baoming.com
+- **域名**：gaokao-baoming.com（不带www，SSL证书只覆盖裸域名）
 - **阿里云服务器**：116.62.70.99（Ubuntu 22.04.5 LTS）
 - **项目路径**：`/var/www/gaokao-advisor-skill/`
 - **本地源码**：`D:\yyc\gaokao-advisor-skill\`
@@ -18,135 +18,89 @@ type: project
 
 ---
 
-## 聊天记录
+## 2026-04-01 完整开发日志
 
-### 2026-04-01 项目启动
+### 对话1-5：项目启动与方向确定
+- 用户提出$100→$10,000挑战
+- 确认资源：GitHub账号、域名gaokao-baoming.com、阿里云服务器
+- 方向调整为中国高考市场（利用现有域名）
+- 设计产品方案：免费+VIP付费模式
 
-#### 对话1：100美金变1万美金
-用户提出挑战：给我100美金，你把它变成1万美金。
+### 对话6：服务器探索
+发现项目已开发60%，前后端架构完整：
+- 前端：React 19 + TypeScript + Vite
+- 后端：Python + FastAPI + Gunicorn
+- 数据库：SQLite（47MB）
+- 支付系统已写好但未接入（payment.py 858行）
 
-我的分析：
-- 100→10000是100倍杠杆，核心不是钱，是时间和技能
-- 我缺一双手和一个身份（不能注册账号、收钱、处理验证码）
-- 需要用户当"代理人"，用户出5%精力，我出95%执行力
-- 用户同意参与
+### 对话7-9：HTTPS + 支付接入 + 手机号登录
+- Let's Encrypt失败（阿里云安全组阻断），改用阿里云免费SSL证书
+- Nginx HTTPS配置完成（/etc/nginx/ssl/gaokao.pem + gaokao.key）
+- 接入支付路由到main.py
+- 添加手机号登录API（send-code + phone-login）
 
-#### 对话2：用户资源确认
-通过问答确认：
-- **目标市场**：交给我定（选了英文市场）
-- **每日时间**：15分钟以内
-- **已有资源**：GitHub账号、ChatGPT/Claude付费账号、域名gaokao-baoming.com
+### 对话10：前端部署（重大踩坑）
 
-#### 对话3：市场调研
-调研了英文市场AI工具方向，Top 3：
-1. AI非营利组织补助金提案助手（推荐）
-2. AI播客节目笔记生成器
-3. AI简历+求职信定制工具
+**根因：Vite构建不生效**
+- **现象**：修改App.tsx后构建产物不变
+- **根因**：`index.html` 直接引用预构建JS `/assets/index-B6hpTFah.js`，Vite没有编译React源码
+- **修复**：入口改为 `<script type="module" src="/src/main.tsx"></script>`
+- **教训**：项目根目录 `assets/` 下有预构建文件，导致Vite跳过源码编译
 
-#### 对话4：方向调整
-用户透露有域名gaokao-baoming.com（高考报名），方向调整为：
-- **线1（优先）**：高考AI工具站，用现有域名，中国市场
-- **线2（后续）**：英文AI Grant Proposal助手
-- 用户选择"两个都做"
+**VIP弹窗空白**
+- **根因**：API返回 `{ data: { products: [...] } }`，前端取 `json.data` 得到对象但当数组 `.map()` 使用
+- **修复**：直接用fetch解析 `json.data.products`，映射字段名
 
-#### 对话5：产品方案设计
-设计了高考AI志愿填报助手方案：
-- 免费功能：基础推荐（前5所）、基础分析、限3次查询
-- 付费功能（¥19.9-99）：完整推荐、深度分析、无限查询、AI对话
-- 变现预估：高峰期月收入¥5000-50000
-- 用户需要做的事：域名DNS（5分钟）+ 微信支付（15分钟）+ 分享（10分钟）
+**验证码收不到**
+- **根因**：后端未接入短信API
+- **临时方案**：后端始终返回验证码，前端显示在登录弹窗
 
-#### 对话6：服务器探索
-登录阿里云服务器（116.62.70.99），发现项目已经开发了60%！
+### 对话11：SEO技术优化
+- Meta标签（title/description/keywords 针对高考志愿搜索词）
+- Open Graph社交分享标签
+- JSON-LD结构化数据（WebApplication类型）
+- robots.txt + sitemap.xml
+- 移动端适配增强
 
-**现有架构：**
-- 前端：React 19 + TypeScript + Vite（单文件App.tsx，952行）
-- 后端：Python + FastAPI + Gunicorn（6个worker，端口8000）
-- 数据库：SQLite（47MB，有大量数据）
-- Web服务器：Nginx（反向代理）
-- 爬虫：scrape_sequential.py 正在运行
+### 对话12：SEO内容文章
+创建3篇攻略HTML页面：
+1. `gaokao-zhiyuan-tianbao-zhinan.html` — 2026高考志愿填报完全指南
+2. `yifen-yiduan-biao-zenme-kan.html` — 一分一段表怎么看
+3. `pingxing-zhiyuan-tianbao-jiqiao.html` — 平行志愿填报技巧
+- 主站底部添加文章链接（内链SEO）
 
-**已完成的功能：**
-1. 智能推荐（冲稳保方案）
-2. 避坑检测（高/中/低风险分级）
-3. 每日真相（教育真相卡片）
-4. 分数↔排名双向转换
-5. 一分一段表查询
-6. 院校搜索+录取历史
-7. 专业搜索+就业数据
-8. 评论系统（后端）
-9. 认证系统（JWT，后端）
+### 对话13：百度站长平台
+- HTML标签验证失败（百度服务器连不上HTTPS）
+- 文件验证成功（不带www域名）
+- 提交4个URL到百度收录
 
-**重大发现：支付系统已写好但未接入！**
-- `modules/payment.py`（858行）：微信支付完整实现
-- `api/payment_routes.py`（455行）：支付API路由已写好
-- VIP会员系统：月VIP¥99、季VIP¥267、年VIP¥888
-- 查询配额系统：免费10次/月，VIP无限
-- **但**：`api/main.py`没有注册支付路由，认证只有微信小程序登录
+---
 
-**变现缺口更新：**
-1. ✅ HTTPS/SSL — 已解决
-2. ✅ 付费系统后端 — 已接入
-3. ✅ 网站端登录 — 已添加手机号登录
-4. 🔄 前端UI升级 — 开发中
-5. [ ] SEO优化
-6. [ ] 移动端适配
+## 当前功能清单
+- ✅ 智能推荐（冲稳保方案）
+- ✅ 避坑检测（高/中/低风险分级）
+- ✅ 每日真相（教育真相卡片）
+- ✅ 分数↔排名双向转换
+- ✅ 一分一段表查询
+- ✅ 院校搜索+录取历史
+- ✅ 专业搜索+就业数据
+- ✅ 手机号登录（验证码显示在页面上）
+- ✅ VIP会员购买弹窗（月¥99/季¥267/年¥888）
+- ✅ 用户信息显示（头像、昵称、剩余次数）
+- ✅ SEO元数据+结构化数据+robots.txt+sitemap.xml
+- ✅ 3篇SEO攻略文章
+- ✅ 百度站长平台验证+URL提交
 
-#### 对话7：执行计划确认
-确定两步走策略：
-- **第1步（1-2周）**：快速补齐变现能力 — HTTPS + 付费墙 + 微信支付 + 前端美化
-- **第2步（高考前）**：引流增长 — SEO + 内容 + 社交媒体
+## 待完成
+- [ ] 短信API接入（替换临时验证码方案）
+- [ ] 外链引流（知乎、小红书等）
+- [ ] 百度收录后监控排名
+- [ ] 更多SEO文章（每周2-3篇）
+- [ ] 百度统计/Google Analytics接入
 
-用户确认"方向很好，继续"。
+---
 
-#### 对话8：HTTPS配置（踩坑记录）
-**Let's Encrypt certbot失败：**
-- 安装certbot + python3-certbot-nginx成功
-- `certbot --nginx`失败（403错误，ACME验证路径被Nginx拦截）
-- `certbot --standalone`也失败（ConnectionResetError）
-- 原因：阿里云安全组可能阻断了Let's Encrypt服务器（国外IP）
-
-**解决方案：阿里云免费SSL证书**
-1. 阿里云控制台 → SSL证书 → 免费证书 → 申请
-2. DNS验证：添加TXT记录 `_dnsauth.gaokao-baoming.com`
-3. DNS验证需要在**云解析DNS**里添加（域名需使用阿里云DNS）
-4. 审核通过后下载Nginx格式证书
-
-**Nginx HTTPS配置踩坑：**
-- 最初用heredoc写配置失败（终端格式化问题，Ctrl+C中断）
-- 用Python写配置也失败（缩进错误）
-- 最终方案：在本地D:\yyc写好配置文件，scp上传到服务器
-- 配置文件路径：`/etc/nginx/sites-available/gaokao-advisor`
-- 发现sites-enabled里有.bak备份文件导致冲突（重复server_name）
-- 删除.bak后重启成功
-
-**HTTPS配置完成：**
-- 证书文件：`/etc/nginx/ssl/gaokao.pem` + `gaokao.key`
-- HTTP自动301跳转到HTTPS
-- SSL协议：TLSv1.2 + TLSv1.3
-- 验证：`curl -I https://gaokao-baoming.com` 返回200 OK
-
-#### 对话9：支付系统接入 + 手机号登录
-
-**后端修改：**
-1. `api/main.py`：添加import payment_router, vip_router + include_router
-2. `api/v1/auth.py`：添加手机号登录端点
-   - `POST /api/v1/auth/send-code` — 发送验证码（60秒频率限制，5分钟过期）
-   - `POST /api/v1/auth/phone-login` — 手机号+验证码登录（自动注册新用户）
-   - 验证码存储在内存（生产环境应用Redis）
-   - 开发模式DEBUG=true时直接返回验证码
-3. `api/config.py`：CORS添加gaokao-baoming.com域名
-
-**踩坑：**
-- 第一次上传auth.py后gunicorn启动失败：`NameError: name 'Session' is not defined`
-- 原因：添加了`session: Session = Depends(get_db)`但没导入Session
-- 修复：添加`from sqlalchemy.orm import Session`
-
-**验证成功：**
-- `GET /api/v1/payment/products` — 返回3个VIP产品 ✅
-- `POST /api/v1/auth/send-code` — 发送验证码成功 ✅
-
-**新增API端点汇总：**
+## API端点汇总
 - `POST /api/v1/auth/send-code` — 发送短信验证码
 - `POST /api/v1/auth/phone-login` — 手机号登录
 - `GET /api/v1/payment/products` — VIP产品列表
@@ -160,54 +114,29 @@ type: project
 
 ---
 
-## 任务清单
-
-### 待执行
-- [ ] 前端UI升级（开发中，后台Agent处理中）
-  - 登录弹窗（手机号+验证码）
-  - VIP会员购买弹窗
-  - 用户信息显示（头像、昵称、剩余次数）
-  - 查询配额提示
-- [ ] 前端构建+部署到服务器
-- [ ] SEO优化和内容引流
-
-### 已完成
-- [x] 市场调研
-- [x] 产品方案设计
-- [x] 服务器探索和现状分析
-- [x] 执行计划制定
-- [x] 把项目源码拉到本地（D:\yyc\gaokao-advisor-skill\）
-- [x] 配置HTTPS/SSL证书（2026-04-01完成）
-  - Let's Encrypt certbot失败（阿里云安全组阻断）
-  - 改用阿里云免费SSL证书 + DNS验证成功
-  - Nginx配置HTTPS + HTTP自动跳转HTTPS
-  - 证书文件：/etc/nginx/ssl/gaokao.pem + gaokao.key
-- [x] 接入支付路由到main.py（2026-04-01完成）
-  - 支付API、VIP API全部注册到生产入口
-- [x] 添加网站端手机号登录（2026-04-01完成）
-  - send-code + phone-login 端点
-  - 修复Session import bug
+## 部署流程
+1. 本地构建：`cd D:\yyc\gaokao-advisor-skill\frontend && npm run build`
+2. 上传dist：`scp -r dist\* root@116.62.70.99:/var/www/gaokao-advisor-skill/frontend/dist/`
+3. 上传后端（如有修改）：`scp api\v1\auth.py root@116.62.70.99:/var/www/gaokao-advisor-skill/api/v1/auth.py`
+4. 重启后端：`pkill -f gunicorn; sleep 2; cd /var/www/gaokao-advisor-skill && sudo -u gaokao venv/bin/gunicorn -c config/gunicorn.conf.py api.main:app -D`
+5. 清理旧JS：删除dist/assets/下不再被index.html引用的旧文件
 
 ---
 
-## 用户资源
-- GitHub账号（已有）
-- ChatGPT/Claude付费账号（已有）
-- 域名gaokao-baoming.com（已有，部署在阿里云）
-- 阿里云服务器 116.62.70.99（Ubuntu 22.04，98GB磁盘）
-- 每天可投入时间：15分钟以内
-
 ## 关键时间节点
-- 2026-04-01：项目启动，HTTPS完成，支付API上线，手机号登录完成
-- 4月：前端UI升级 + 部署
-- 5月：SEO优化 + 内容积累
+- 2026-04-01：项目启动，全栈上线，SEO+百度提交完成
+- 4月：内容积累，每周2-3篇SEO文章
+- 5月：外链引流，知乎/小红书推广
 - 6-7月：高考季流量高峰，重点变现
 
 ## 技术笔记
 - **服务器操作方式**：用户SSH登录后手动执行命令（我无法直接SSH）
 - **文件上传方式**：本地写好文件 → scp上传到服务器
-- **PowerShell限制**：多行bash命令在PowerShell中会被分行执行，需要一行一条
-- **Nginx配置文件**：`/etc/nginx/sites-available/gaokao-advisor`（符号链接到sites-enabled）
+- **PowerShell限制**：多行bash命令会被分行执行，需一行一条
+- **SSL证书**：阿里云免费证书，只覆盖gaokao-baoming.com（不含www），有效期至2026-06-29
+- **百度站长**：已验证，站点URL为 https://gaokao-baoming.com（不带www）
+- **Nginx配置**：`/etc/nginx/sites-available/gaokao-advisor`（符号链接到sites-enabled）
 - **Gunicorn配置**：`/var/www/gaokao-advisor-skill/config/gunicorn.conf.py`
 - **重启后端命令**：`pkill -f gunicorn; sleep 2; cd /var/www/gaokao-advisor-skill && sudo -u gaokao venv/bin/gunicorn -c config/gunicorn.conf.py api.main:app -D`
 - **Gunicorn日志**：`/var/log/gaokao_advisor/error.log`
+- **Vite构建注意**：index.html必须用 `/src/main.tsx` 入口，不能用预构建JS文件

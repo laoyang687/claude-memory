@@ -33,6 +33,7 @@
 
 ## 进行中的项目
 - [高考AI工具站](gaokao_project.md) — gaokao-baoming.com，$100→$10,000计划，2026-04-01启动
+- [GEO第一性原理](geo-first-principles.md) — 被引用≠收入，流量→信任范式；高考站GEO实战锚，含引用体检+变现闭环两待办，2026-07-24
 - [100位普通人SOP](100-ordinary-people-sop.md) — 采访100位普通人打造个人故事，基于一条徐沪生方法论逆向拆解，2026-06-10创建
 - [一条案例拆解](yitiao-case-study.md) — 一条经典视频逐秒拆解，学习参考模板
 - [001号选题](person-001-windpower.md) — 风电项目经理，创业失败学AI，24/25分🔥；含行业反差备选Hook（A/B两版）+8问深挖提纲
@@ -69,7 +70,7 @@
 
 **手动备份（每天关机前）：**
 ```bash
-cd ~/.claude && git add memory.md && git commit -m "更新记忆" && git push
+cd ~/.claude && git add projects/C--Users-wqj85/memory/ && git commit -m "更新记忆" && git push
 ```
 
 **设置自动备份（下午6点）：**

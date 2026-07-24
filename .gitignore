@@ -28,3 +28,12 @@ Thumbs.db
 
 # 工具结果缓存
 **/tool-results/
+# 敏感文件(含明文凭据/配置),禁止推送公开仓库 2026-07-24
+projects/C--Users-wqj85/memory/notion_mcp.md
+projects/C--Users-wqj85/memory/cc-connect-feishu.md
+projects/C--Users-wqj85/memory/clash-proxy-setup.md
+projects/C--Users-wqj85/memory/lark_cli_startup.md
+.mcp.json
+settings.json
+settings.local.json
+proxy-env-backup.txt
