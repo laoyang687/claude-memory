@@ -43,6 +43,7 @@
 - [000号拍摄脚本](000-shooting-script.md) — 8幕完整脚本，可直接拍摄，含画面+问答+金句
 - [归档RAG系统](archive-rag-project.md) — 新能源企业档案归档标准化,archive-rag,三层资产/V1纯结构化,2026-07-24
 - [每日信息早报系统](daily-digest-system.md) — 27源精选+Windows计划任务7:30自动抓+Claude总结,判断力结构化输入端,C:\Users\wqj85\DailyDigest,2026-07-27
+- [100→1万三个月冲刺](100-to-10k-sprint.md) — 三方案组合:方案一IP产品阶梯(99/999/4999)主线+方案三代运营过渡+方案二高考站并行,目标7.2万,2026-07-29
 
 ---
 
